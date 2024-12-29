@@ -1,0 +1,28 @@
+# Executáveis
+*.exe
+*.out
+
+# Arquivos objeto e bibliotecas
+*.o
+*.a
+*.lib
+*.dll
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Diretórios
+/build/
+/debug/
+/release/
+
+# Arquivos específicos da IDE
+.vscode/
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+
+# Outros
+.DS_Store  # Para Mac
