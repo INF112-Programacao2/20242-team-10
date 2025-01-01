@@ -1,7 +1,7 @@
 #include "jogo.h"
 
 Jogo::Jogo() :
-    _janela(sf::VideoMode(800.0f,600.0f), "Torre") , _personagens ()
+    gGrafico (gGrafico->get_grafico()), _personagens ()
 {
     // aloca dinamicamente um jogador e um inimigo, ja chamando seus construtores e indicando os parametros
     Jogador *_jogador = new Jogador(sf::Vector2f(100.0f,200.0f), sf::Vector2f(50.0f,50.0f));
@@ -20,25 +20,25 @@ Jogo::Jogo() :
 
 void Jogo::executarJanela () {
 
-    while(_janela.isOpen()){
+    while(gGrafico->janelaEstaAberta()){
         sf::Event evento;
-        if (_janela.pollEvent(evento)){
+        if (gGrafico->get_janela()->pollEvent(evento)){
             if (evento.type==sf::Event::Closed){
-                _janela.close();
+                gGrafico->fecharJanela();
             }
             else if (evento.type == sf::Event::KeyPressed){
                 if (evento.key.code == sf::Keyboard::Escape){
-                    _janela.close();
+                    gGrafico->fecharJanela();
                 }
             }
         }
 
-        _janela.clear();
+        gGrafico->limparJanela();
         for( int i=0 ; i < _personagens.size(); i++){ 
             _personagens[i]->movimentar();                          // polimorfismo do metodo movimentar
-            _janela.draw(_personagens[i]->get_corpo());             // desenha os personagens
+           gGrafico->desenhar(_personagens[i]->get_corpo());             // desenha os personagens
         }
-        _janela.display();
+        gGrafico->mostrarNaTela();
 
     }
     _personagens.clear();   // limpa o vector de personagens

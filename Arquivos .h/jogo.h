@@ -4,11 +4,12 @@
 #include "jogador.h"
 #include "personagem.h"
 #include "inimigo.h"
+#include "gerenciadorgrafico.h"
 
 
 class Jogo {
 private:
-    sf::RenderWindow _janela;
+    GerenciadorGrafico* gGrafico;
     std::vector < Personagem* > _personagens;
 
 public:
