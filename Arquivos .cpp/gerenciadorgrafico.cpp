@@ -13,18 +13,20 @@ GerenciadorGrafico::GerenciadorGrafico() :
 
 // destrutor
 GerenciadorGrafico::~GerenciadorGrafico () {
-    if (janelaEstaAberta())                                  // se a janela esta aberta
-        delete (get_janela());                               // da o delete
-        _janela = nullptr;                                   // coloca nulo
+    if (_janela->isOpen())                                  // se a janela esta aberta
+        _janela->close();                                   // fecha a janela
+
+    delete (get_janela());                                   // da o delete
+    _janela = nullptr;                                       // coloca nulo
 }
 
 
 // funcao que retorna o gerenciador grafico
 GerenciadorGrafico* GerenciadorGrafico::get_grafico() {
-    if (_grafico == nullptr)                    // se o gerenciador grafico ainda nao foi criado
-        return new GerenciadorGrafico();        // cria o gerenciador grafico
+    if (_grafico == nullptr)                        // se o gerenciador grafico ainda nao foi criado
+        _grafico = new GerenciadorGrafico();        // cria o gerenciador grafico
 
-return _grafico;                                // se ja foi criado, simplesmente o retorna 
+return _grafico;                                    // se ja foi criado, simplesmente o retorna 
 }
 
 // funcao que retorna a janela criada
