@@ -18,11 +18,12 @@ private:
     void inicializarVelocidade();
 
 public: 
-    Inimigo (const sf::Vector2f posicao, const sf::Vector2f tamanho, Jogador* jogador);
+    Inimigo (const sf::Vector2f posicao, const sf::Vector2f tamanho, sf::Vector2f velocidade, Jogador* jogador, Identificador id);
     ~Inimigo();
     void perseguirJogador (sf::Vector2f posicaoJogador, sf::Vector2f posicaoInimigo);
     void movimentarAleatoriamente ();
-    virtual void movimentar();
+    virtual void atualizar();
+    virtual void colisao (Entidade* entidade,sf::Vector2f distancia);
 };
 
 

@@ -6,19 +6,21 @@
 #include "jogador.h"
 
 class GerenciadorEvento {
-private:
+protected:
     GerenciadorGrafico* _gGrafico;
     Jogador* _jogador;
-    // construtor privado para garantir que exista apenas um gerenciador de eventos em todo o programa
     static GerenciadorEvento* _gEvento;
-    GerenciadorEvento(GerenciadorGrafico* gGrafico, Jogador* jogador);
+
 public:
+    GerenciadorEvento(GerenciadorGrafico* gGrafico, Jogador* jogador);
     ~GerenciadorEvento ();
     static GerenciadorEvento* get_gEvento(GerenciadorGrafico* gGrafico = nullptr);
-    void set_jogador(Jogador* jogador);
     void verificarTeclaPressionada(sf::Keyboard::Key tecla);
     void verificarTeclaSolta(sf::Keyboard::Key tecla);
-    void executar();
+    void verificarClickMouse (sf::Event::MouseButtonEvent botaoMouse);
+    //void verificarClickSolto (sf::Event::MouseButtonEvent botaoSolto);
+    void set_jogador(Jogador* jogador);
+    void executarLoopEvento();
 };
 
 

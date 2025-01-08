@@ -1,6 +1,6 @@
 #include "inimigo.h"
 
-void Inimigo::movimentar() {
+void Inimigo::atualizar() {
     sf::Vector2f posicaoJogador = _jogador->get_corpo().getPosition();             // pega a posicao do corpo do jogador
     sf::Vector2f posicaoInimigo = _corpo.getPosition();             // pega a posicao do corpo do inimigo
     
@@ -12,6 +12,9 @@ void Inimigo::movimentar() {
 
 }
 
+void Inimigo::colisao(Entidade *entidade, sf::Vector2f distancia)
+{
+}
 
 // funcao que faz o inimigo perseguir o jogador principal
 void Inimigo::perseguirJogador (sf::Vector2f posicaoJogador, sf::Vector2f posicaoInimigo) {
@@ -41,8 +44,8 @@ Inimigo::~Inimigo() {
 }
 
 // construtor
-Inimigo::Inimigo (const sf::Vector2f posicao, const sf::Vector2f tamanho, Jogador *jogador) :
-    Personagem (posicao,tamanho) , _relogio() , _jogador(jogador)
+Inimigo::Inimigo (const sf::Vector2f posicao, const sf::Vector2f tamanho, sf::Vector2f velocidade, Jogador *jogador, Identificador id) :
+    Personagem (posicao,tamanho,velocidade, Identificador::inimigo) , _relogio() , _jogador(jogador)
 {
     _corpo.setFillColor (sf::Color::Blue);  // inicializa a cor do inimigo com azul
     inicializarVelocidade();
