@@ -4,6 +4,7 @@
 
 class Camera {
 private:
+    // bool cameraAtivada;
     sf::View _camera;
     sf::IntRect _limiteCamera;                          // ou limites da fase, ja que a camera so mostra ate o final da fase                  
     sf::IntRect _limiteObjeto;                          // area onde o jogador se move sem que a camera precise se mover tambem, tipo uma "zona morta"

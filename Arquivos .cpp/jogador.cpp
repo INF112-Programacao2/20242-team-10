@@ -55,15 +55,28 @@ void Jogador::atualizarAnimacao()
 }
 
 // construtor que usa o construtor de Personagem
-Jogador::Jogador (const sf::Vector2f posicao, const sf::Vector2f tamanho, sf::Vector2f velocidade, Identificador id) :
-    Personagem (posicao,tamanho,velocidade, Identificador::jogador) , estaNoChao (true) , _tempoAtaque(0.0f)
+Jogador::Jogador (sf::Vector2f posicao) :
+    Personagem (posicao,sf::Vector2f (TAMANHO_JOGADOR_X,TAMANHO_JOGADOR_Y), sf::Vector2f(VELOCIDADE_JOGADOR_X,VELOCIDADE_JOGADOR_Y), Identificador::jogador) ,
+     estaNoChao (true) , _tempoAtaque(0.0f)
     {
         inicializarAnimacao();
+        //inicializarBarraVida();
+
+        /*if (_arma != nullptr){
+            set_arma(arma);
+            _arma->set_dano()
+        }*/
+       gGrafico->set_limiteObjeto(sf::IntRect(_posicao.x,_posicao.y,_tamanho.x,_tamanho.y));
     }
     
 // destrutor
 Jogador::~Jogador () {
 
+}
+
+bool Jogador::get_estaNoChao()
+{
+    return estaNoChao;
 }
 
 void Jogador::pular()
@@ -75,9 +88,6 @@ void Jogador::pular()
         atacando = false;
     }
 
-    // verifica se o corpo esta no chao
-    if (_corpo.getPosition().y == NIVEL_DA_PLATAFORMA)    // esta no chao 
-        estaNoChao = true;
 }
 
 void Jogador::podePular()
@@ -138,6 +148,10 @@ void Jogador::atualizarPosicao()
     }
 }
 
+void Jogador::desenhar()
+{
+    gGrafico->desenhar (_corpo);
+}
 
 /*void Jogador::atualizarPosicao()
 {

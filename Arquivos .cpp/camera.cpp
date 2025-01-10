@@ -24,8 +24,8 @@
         }
 
         // funcao que reinicia o centro da camera
-        void Camera::resetar(sf::Vector2f possicaoCentro){
-            _camera.setCenter(possicaoCentro);
+        void Camera::resetar(sf::Vector2f posicaoCentro){
+            _camera.setCenter(posicaoCentro);
         }
 
         // funcao que ajusta os limites entre o objeto e a camera horizontalmente e verticalmente 

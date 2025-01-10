@@ -1,8 +1,10 @@
 #include "entidade.h"
+
+// cria o gerenciador grafico 
 GerenciadorGrafico* Entidade::gGrafico = GerenciadorGrafico::get_grafico();
 
 // construtor
-Entidade::Entidade(const sf::Vector2f posicao, sf::Vector2f tamanho, Identificador id) :
+Entidade::Entidade(sf::Vector2f posicao, sf::Vector2f tamanho, Identificador id) :
     _corpo(sf::RectangleShape (tamanho)) , _tamanho(tamanho) , _posicao(posicao) , _id(id)    // inicializa os parametros
 {
     _corpo.setPosition(posicao);                                                    // seta a posicao e a cor do corpo
@@ -52,7 +54,7 @@ Identificador Entidade::get_id() const
     return this->_id;
 }
 
-// funcao que desenha na tela, vinda da classe gerenciador grafico
+// funcao que desenha na tela, utilizando o metodo da classe gerenciador grafico
 void Entidade::desenhar()
 {
     gGrafico->desenhar(_corpo);

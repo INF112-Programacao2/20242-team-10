@@ -15,7 +15,7 @@ protected:
 
 public:
     // construtor
-    Entidade (const sf::Vector2f posicao,sf::Vector2f tamanho, Identificador id);
+    Entidade (sf::Vector2f posicao,sf::Vector2f tamanho, Identificador id);
     //destrutor
     virtual ~Entidade();
     // getters e setters

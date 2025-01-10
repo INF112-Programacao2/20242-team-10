@@ -6,6 +6,8 @@
 #include "inimigo.h"
 #include "gerenciadorgrafico.h"
 #include "gerenciadoreventos.h"
+#include "fundo.h"
+#include "esqueleto.h"
 
 
 class Jogo {
@@ -13,6 +15,7 @@ private:
     GerenciadorGrafico* gGrafico;
     GerenciadorEvento* gEvento;
     std::vector < Personagem* > _personagens;
+    Fundo* _fundo;
 
 public:
     Jogo();

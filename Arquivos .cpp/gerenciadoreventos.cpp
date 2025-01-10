@@ -28,7 +28,7 @@ void GerenciadorEvento::verificarTeclaPressionada(sf::Keyboard::Key tecla)
     else if ( tecla == sf::Keyboard::D || tecla == sf::Keyboard::Right){
         _jogador->andar(false);
     }
-    else if ( tecla == sf::Keyboard::Space || tecla == sf::Keyboard::W ){
+    else if ( (tecla == sf::Keyboard::Space || tecla == sf::Keyboard::W) ){
         _jogador->pular ();
     }
     else if ( tecla == sf::Keyboard::Escape){

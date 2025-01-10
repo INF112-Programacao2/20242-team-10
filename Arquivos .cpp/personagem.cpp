@@ -1,7 +1,7 @@
 #include "personagem.h"
 
 // construtor 
-Personagem::Personagem (const sf::Vector2f posicao, const sf::Vector2f tamanho, sf::Vector2f velocidade, Identificador id) :
+Personagem::Personagem (sf::Vector2f posicao, sf::Vector2f tamanho, sf::Vector2f velocidade, Identificador id) :
     Entidade (posicao,tamanho,id) , _velocidade (velocidade) , andando (false) , andaEsquerda (false) ,
     levandoDano (false) , atacando (false) , morrendo (false) , vidaMaxima (100.0f) , _animacao(&_corpo) {}                                   // inicializa todos os parametros
 
@@ -34,7 +34,7 @@ bool Personagem::estaAtacando() const
 }
 
 // funcao que desenha na tela, vinda da classe gerenciador grafico
-void Personagem::desenhar(sf::RectangleShape desenho)
+void Personagem::desenhar()
 {
     gGrafico->desenhar(_corpo);
 }

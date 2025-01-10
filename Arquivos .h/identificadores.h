@@ -7,7 +7,8 @@ enum Identificador {
     inimigo,
     plataforma,
     fundo,
-    porta
+    porta,
+    esqueleto
 
 
 };
