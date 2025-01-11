@@ -2,7 +2,7 @@
 #define CAMERA_H
 #include <SFML/Graphics.hpp>
 
-class Camera {
+/*class Camera {
 private:
     // bool cameraAtivada;
     sf::View _camera;
@@ -24,19 +24,20 @@ public:
     void resetar(sf::Vector2f posicaoCentro);
     void atualizar(sf::Vector2f posicao);
     void atualizar(sf::Vector2f posicao, sf::Vector2f tamanho);
-};
+};*/
 
   
 
 
-/*
+
 class Camera {
 private:
     sf::View _camera; 
-    sf::FloatRect _limiteMapa;          // limite do mapa que no caso tambem e o limite da camera, ate onde ela vai
+    sf::IntRect _limiteCamera;          // limite do mapa que no caso tambem e o limite da camera, ate onde ela vai
     sf::FloatRect _zonaMorta;           // area onde o jogador se move sem a camera se mover junto
     sf::Vector2f _tamanhoJanela;
 
+    void ajustarCentro (sf::Vector2f& novoCentro);
 public:
     // construtor
     Camera (sf::Vector2f tamanhoJanela);
@@ -44,11 +45,11 @@ public:
     ~Camera ();
     // getters e setters
     sf::View get_camera();
-    void set_limiteMapa (sf::FloatRect novoLimiteMapa);
+    void set_limiteCamera (sf::IntRect novoLimiteMapa);
     // metodos da classe
-    void atualizarCamera (sf::Vector2f posicaoJogador);
+    void atualizar (sf::Vector2f posicaoJogador);
     
 };
 
-*/
+
 #endif

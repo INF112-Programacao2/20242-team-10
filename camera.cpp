@@ -1,6 +1,6 @@
 #include "camera.h"
 
-        // constutor 
+       /* // constutor 
         Camera::Camera(sf::Vector2f tamanhoJanela):
             _limiteCamera(sf::IntRect(-1, -1, -1, -1)), _tamanhoJanela(tamanhoJanela),                       // inicializacao do limite da camera e do objeto iguais, sinalizando que eles estao centralizados, no caso a sinalizacao se da pelo -1
             _camera(sf::Vector2f(tamanhoJanela.x / 2.0f, tamanhoJanela.y / 2.0f), tamanhoJanela),
@@ -98,23 +98,45 @@
                 limiteObjeto.left += ds.x;
                 limiteObjeto.top += ds.y;
                 camera.setCenter(center);
-            }*/
+            }
         }
 
-    
+    */
 
+       void Camera::ajustarCentro(sf::Vector2f &novoCentro)
+       {
+          float metadeLargura = _tamanhoJanela.x / 2.0f;
+    float metadeAltura = _tamanhoJanela.y / 2.0f;
 
-/*
-// construtor
-Camera::Camera(sf::Vector2f tamanhoJanela) :
-    _tamanhoJanela(tamanhoJanela) 
-    { 
-    _camera.setSize (tamanhoJanela);
-    _camera.setCenter (tamanhoJanela.x/2.0 , tamanhoJanela.y/2.0);
+    // Limita horizontalmente
+    if (novoCentro.x - metadeLargura < _limiteCamera.left) {
+        novoCentro.x = _limiteCamera.left + metadeLargura;
+    } else if (novoCentro.x + metadeLargura > _limiteCamera.left + _limiteCamera.width) {
+        novoCentro.x = _limiteCamera.left + _limiteCamera.width - metadeLargura;
+    }
 
-    // zona morta comeca com 20% da largura da janela e 30% do altura
-    _zonaMorta.width = tamanhoJanela.x * 0.3f; 
-    _zonaMorta.height = tamanhoJanela.y * 0.2f;
+    // Limita verticalmente
+    if (novoCentro.y - metadeAltura < _limiteCamera.top) {
+        novoCentro.y = _limiteCamera.top + metadeAltura;
+    } else if (novoCentro.y + metadeAltura > _limiteCamera.top + _limiteCamera.height) {
+        novoCentro.y = _limiteCamera.top + _limiteCamera.height - metadeAltura;
+    }
+       }
+
+       // construtor
+       Camera::Camera(sf::Vector2f tamanhoJanela) : _tamanhoJanela(tamanhoJanela)
+       {
+           _camera.setSize(tamanhoJanela);
+           _camera.setCenter(tamanhoJanela.x / 2.0, tamanhoJanela.y / 2.0);
+
+           // zona morta comeca com 20% da largura da janela e 30% do altura
+           _zonaMorta.width = tamanhoJanela.x * 0.3f;
+           _zonaMorta.height = tamanhoJanela.y * 0.2f;
+
+               _limiteCamera.left = 0;
+    _limiteCamera.top = 0;
+    _limiteCamera.width = tamanhoJanela.x;
+    _limiteCamera.height = tamanhoJanela.y;
 
     }
 
@@ -131,15 +153,51 @@ sf::View Camera::get_camera()
 }
 
 // funcao que retorna os limites do mapa/fase
-void Camera::set_limiteMapa(sf::FloatRect novoLimiteMapa)
+void Camera::set_limiteCamera(sf::IntRect limiteCamera)
 {
-    this->_limiteMapa = novoLimiteMapa;
+        _limiteCamera = limiteCamera;
+    
+    // Garante que a câmera começa em uma posição válida
+    sf::Vector2f centro = _camera.getCenter();
+    ajustarCentro(centro);
+    _camera.setCenter(centro);
 }
 
 // funcao que atualiza a posicao da camera de acordo com que o jogador sai da zona morta
-void Camera::atualizarCamera(sf::Vector2f posicaoJogador)
+void Camera::atualizar(sf::Vector2f posicaoJogador)
 {
-    sf::Vector2f centroCamera = _camera.getCenter();                                   // pega o centro da camera\
+    sf::Vector2f centroCamera = _camera.getCenter();
+    bool precisaAtualizar = false;
+    sf::Vector2f novoCentro = centroCamera;
+
+    // Atualiza a posição da zona morta
+    _zonaMorta.left = centroCamera.x - _zonaMorta.width / 2.0f;
+    _zonaMorta.top = centroCamera.y - _zonaMorta.height / 2.0f;
+
+    // Verifica se o jogador saiu da zona morta
+    if (posicaoJogador.x > _zonaMorta.left + _zonaMorta.width) {
+        novoCentro.x = posicaoJogador.x - _zonaMorta.width / 2.0f;
+        precisaAtualizar = true;
+    }
+    else if (posicaoJogador.x < _zonaMorta.left) {
+        novoCentro.x = posicaoJogador.x + _zonaMorta.width / 2.0f;
+        precisaAtualizar = true;
+    }
+
+    if (posicaoJogador.y > _zonaMorta.top + _zonaMorta.height) {
+        novoCentro.y = posicaoJogador.y - _zonaMorta.height / 2.0f;
+        precisaAtualizar = true;
+    }
+    else if (posicaoJogador.y < _zonaMorta.top) {
+        novoCentro.y = posicaoJogador.y + _zonaMorta.height / 2.0f;
+        precisaAtualizar = true;
+    }
+
+    if (precisaAtualizar) {
+        // Ajusta o novo centro para respeitar os limites
+        ajustarCentro(novoCentro);
+        _camera.setCenter(novoCentro);
+   /* sf::Vector2f centroCamera = _camera.getCenter();                                   // pega o centro da camera\
 
     // atualiza a posicao da zona morta, deixando ela centralizada na camera
     _zonaMorta.left = centroCamera.x - _zonaMorta.width / 2.0f;      // pega o centro da camera e subtrai pela metada da largura total da zona morta e atualiza a posicao do lado esquerdo da zona morta, fazendo com que ela fique centralizada em relacao ao eixo x da visao da camera
@@ -189,10 +247,10 @@ void Camera::atualizarCamera(sf::Vector2f posicaoJogador)
         }
 
         _camera.setCenter(novoCentro);                                                          // atualiza o novo centro da camera
-    }
+    }*/
+}
 }
 
 
 
 
-*/

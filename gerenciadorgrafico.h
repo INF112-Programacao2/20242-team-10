@@ -26,7 +26,7 @@ public:
     float get_tempo () const;
     sf::View get_camera();
     void set_limiteCamera (sf::IntRect limiteCamera);
-    void set_limiteObjeto (sf::IntRect objeto);
+    //void set_limiteObjeto (sf::IntRect objeto);
     // metodos da classe
     void limparJanela();
     void desenhar(sf::RectangleShape desenho);

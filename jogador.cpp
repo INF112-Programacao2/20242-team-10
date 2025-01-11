@@ -6,10 +6,10 @@ void Jogador::inicializarAnimacao()
     sf::Vector2f origem = sf::Vector2f (_tamanho.x / 2.0f, _tamanho.y / 2.0f);
     //sf::Vector2f origemPulo = sf::Vector2f (_tamanho.x / 2.0f, _tamanho.y * 0.75f);
 
-    _animacao.adicionarAnimacao("C:/Users/Caio/Desktop/Projeto Final INF112/Correndo.png", "CORRER", 10 , 0.05f , sf::Vector2f(6,2),origem,true);
-    _animacao.adicionarAnimacao("C:/Users/Caio/Desktop/Projeto Final INF112/Parado.png", "PARADO", 10 , 0.10f , sf::Vector2f(6,2),origem,true);
-    _animacao.adicionarAnimacao("C:/Users/Caio/Desktop/Projeto Final INF112/Pulando.png", "PULAR", 3 , 0.10f , sf::Vector2f(6,2),origem,true);
-    _animacao.adicionarAnimacao("C:/Users/Caio/Desktop/Projeto Final INF112/Atacando.png", "ATACAR", 6 , 0.10f , sf::Vector2f(6,2),origem,true);
+    _animacao.adicionarAnimacao("Correndo.png", "CORRER", 10 , 0.05f , sf::Vector2f(6,2),origem,true);
+    _animacao.adicionarAnimacao("Parado.png", "PARADO", 10 , 0.10f , sf::Vector2f(6,2),origem,true);
+    _animacao.adicionarAnimacao("Pulando.png", "PULAR", 3 , 0.10f , sf::Vector2f(6,2),origem,true);
+    _animacao.adicionarAnimacao("Atacando.png", "ATACAR", 6 , 0.10f , sf::Vector2f(6,2),origem,true);
     
 }
 
@@ -66,7 +66,7 @@ Jogador::Jogador (sf::Vector2f posicao) :
             set_arma(arma);
             _arma->set_dano()
         }*/
-       gGrafico->set_limiteObjeto(sf::IntRect(_posicao.x,_posicao.y,_tamanho.x,_tamanho.y));
+       //gGrafico->set_limiteObjeto(sf::IntRect(_posicao.x,_posicao.y,_tamanho.x,_tamanho.y));
     }
     
 // destrutor

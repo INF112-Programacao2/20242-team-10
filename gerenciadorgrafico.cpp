@@ -92,10 +92,10 @@ void GerenciadorGrafico::set_limiteCamera(sf::IntRect limiteCamera)
 }
 
 // funcao que altera os limites do objeto (jogador)
-void GerenciadorGrafico::set_limiteObjeto(sf::IntRect objeto)
+/*void GerenciadorGrafico::set_limiteObjeto(sf::IntRect objeto)
 {
-    _camera.set_limiteObjeto(objeto);
-}
+    _camera.set_limite(objeto);
+}*/
 
 
 // funcao que fecha a janela

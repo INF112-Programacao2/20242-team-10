@@ -5,15 +5,15 @@ Jogo::Jogo() :
     gGrafico (gGrafico->get_grafico()), _personagens (), gEvento(gEvento->get_gEvento(gGrafico->get_grafico())) , _fundo(new Fundo(Identificador::fundo))
 {
     // define os limite do mapa
-    sf::FloatRect limiteMapa (0.0f,0.0f,TAMANHO_TELA_X*3,TAMANHO_TELA_Y*2);
-    //gGrafico->set_limiteMapa(limiteMapa);
+    sf::IntRect limiteCamera (0.0f,0.0f,TAMANHO_TELA_X*2,TAMANHO_TELA_Y);
+    gGrafico->set_limiteCamera(limiteCamera);
 
     // cria o fundo
     sf::Vector2f tamanhoTextura (1200.0f,800.0f), origem (0.0f,0.0f);
     sf::Vector2f tamanhoTextura2 (1200.0f,100.0f), origem2 (0.0f,700.0f);
-    _fundo->adicionarCamada ("C:/Users/Caio/Desktop/Projeto Final INF112/Fundo1.png",tamanhoTextura,origem);
-    _fundo->adicionarCamada ("C:/Users/Caio/Desktop/Projeto Final INF112/Fundo2.png",tamanhoTextura,origem);
-    _fundo->adicionarCamada ("C:/Users/Caio/Desktop/Projeto Final INF112/Fundo3.png",tamanhoTextura2,origem2);
+    _fundo->adicionarCamada ("Fundo1.png",tamanhoTextura,origem);
+    _fundo->adicionarCamada ("Fundo2.png",tamanhoTextura,origem);
+    _fundo->adicionarCamada ("Fundo3.png",tamanhoTextura2,origem2);
 
     // aloca dinamicamente um jogador e um inimigo, ja chamando seus construtores e indicando os parametros
     Jogador *_jogador = new Jogador(sf::Vector2f(600.0f,NIVEL_DA_PLATAFORMA));
