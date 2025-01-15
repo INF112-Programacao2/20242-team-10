@@ -2,8 +2,9 @@
 #define PLATAFORMA_H
 
 #include "obstaculo.h"
+#include "jogador.h"
 
-#define TEXTURA_CHAO_DE_MADEIRA "C:/Users/Caio/Desktop/Projeto Final INF112/Chao de madeira.png"
+#define TEXTURA_CHAO_DE_MADEIRA "Chao de madeira.png"
 
 class Plataforma : public Obstaculo {
 private:

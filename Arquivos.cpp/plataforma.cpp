@@ -12,7 +12,7 @@ void Plataforma::inicializarAnimacao()
 }
 
 Plataforma::Plataforma(sf::Vector2f posicao, sf::Vector2f tamanho, std::string tipo, Identificador id) :
-    Obstaculo(posicao, tamanho, id) , _tipo(tipo) , _escala (sf::Vector2f(1.0f,1.0f))
+    Obstaculo(posicao, tamanho, Identificador::plataforma) , _tipo(tipo) , _escala (sf::Vector2f(1.0f,1.0f))
 {
     inicializarAnimacao ();
 }
@@ -30,7 +30,11 @@ void Plataforma::set_escala(sf::Vector2f escala)
 
 void Plataforma::colisao(Entidade* entidade, sf::Vector2f distancia)
 {
-    if (entidade->get_id() == Identificador::jogador){
-        colisaoObstaculo (distancia,dynamic_cast < Personagem* > (entidade));
+     if (entidade->get_id() == Identificador::jogador ||
+        entidade->get_id() == Identificador::esqueleto) {
+        Personagem* personagem = dynamic_cast<Personagem*>(entidade);
+        if (personagem) {
+            colisaoObstaculo(distancia, personagem);
+        }
     }
 }

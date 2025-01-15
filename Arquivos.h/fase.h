@@ -1,14 +1,17 @@
 #ifndef FASE_H
 #define FASE_H
 
-#include "gerenciadorgrafico.h"
-#include "identificadores.h"
+#include "entidade.h"
 #include "listaentidade.h"
 #include "fundo.h"
 #include "gerenciadorcolisao.h"
 
+
+class Jogador;
+class Esqueleto;
+
 class Fase {
-private:
+protected:
     GerenciadorGrafico* gGrafico;
     GerenciadorColisao* gColisao;
     Identificador _idFase;
@@ -22,6 +25,7 @@ private:
     void criarParede ();
     void criarPorta ();
 
+
 public:
     // construtor
     Fase (Identificador idFase, Identificador idFundo);
@@ -29,10 +33,12 @@ public:
     ~Fase ();
     //  getters e setters
     void set_limiteCamera (sf::IntRect limiteCamera);
+    void set_mapa(std::vector < std::vector < char >> mapa);
     //sf::IntRect get_limiteCamera ();
     Jogador* get_jogador();
     // metodos da classe
-    void mudarFase (Identificador id = Identificador::comeco);
+    void criarPersonagem (sf::Vector2f posicao, Identificador id);
+    //void mudarFase (Identificador id = Identificador::comeco);
     virtual void criarMapa() = 0;
     virtual void criarFundo () = 0;
     void executarFase ();

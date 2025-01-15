@@ -3,7 +3,7 @@
 
 #include "entidade.h"
 #include "personagem.h"
-#include "jogador.h"
+#include <cmath>
 
 class Obstaculo : public Entidade {
 protected:

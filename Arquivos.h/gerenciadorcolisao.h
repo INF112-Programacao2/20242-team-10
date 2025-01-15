@@ -8,6 +8,9 @@ private:
     ListaEntidade* _listaPersonagens;
     ListaEntidade* _listaObstaculos;
 
+    void verificaColisaoEntrePersonagens ();
+    void verificaColisaoPersonagemObstaculo ();
+    //void verificarColisaoArmas ();
 public:
     GerenciadorColisao (ListaEntidade* listaPersonagens, ListaEntidade* listaObstaculos);
     ~GerenciadorColisao ();

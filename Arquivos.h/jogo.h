@@ -8,19 +8,23 @@
 #include "gerenciadoreventos.h"
 #include "fundo.h"
 #include "esqueleto.h"
+#include "fase.h"
+#include "chegadaCastelo.h"
+#include "arma.h"
 
 
 class Jogo {
 private:
     GerenciadorGrafico* gGrafico;
     GerenciadorEvento* gEvento;
-    std::vector < Personagem* > _personagens;
-    Fundo* _fundo;
+    //std::vector < Personagem* > _personagens;
+    Fase* faseAtual;
 
 public:
     Jogo();
     ~Jogo();
     void executarJanela();
+    void mudarFase(Identificador idFase);
 };
 
 #endif

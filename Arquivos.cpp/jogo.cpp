@@ -2,35 +2,41 @@
 #include <iostream>
 
 Jogo::Jogo() :
-    gGrafico (gGrafico->get_grafico()), _personagens (), gEvento(gEvento->get_gEvento(gGrafico->get_grafico())) , _fundo(new Fundo(Identificador::fundo))
+    gGrafico (gGrafico->get_grafico()), gEvento(gEvento->get_gEvento(gGrafico->get_grafico())) , faseAtual (nullptr)
 {
-    // define os limite do mapa
-    sf::IntRect limiteCamera (0.0f,0.0f,TAMANHO_TELA_X*2,TAMANHO_TELA_Y);
-    gGrafico->set_limiteCamera(limiteCamera);
+   try {
+        // Define os limites do mapa
+        sf::IntRect limiteCamera(0.0f,0.0f,TAMANHO_TELA_X*2,TAMANHO_TELA_Y);
+        gGrafico->set_limiteCamera(limiteCamera);
 
-    // cria o fundo
-    sf::Vector2f tamanhoTextura (1200.0f,800.0f), origem (0.0f,0.0f);
-    sf::Vector2f tamanhoTextura2 (1200.0f,100.0f), origem2 (0.0f,700.0f);
-    _fundo->adicionarCamada ("Fundo1.png",tamanhoTextura,origem);
-    _fundo->adicionarCamada ("Fundo2.png",tamanhoTextura,origem);
-    _fundo->adicionarCamada ("Fundo3.png",tamanhoTextura2,origem2);
+        // Cria o mapa
+        std::vector<std::vector<char>> mapa = {
+            {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '},
+            {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '},
+            {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '},
+            {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '},
+            {' ','%',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '},
+            {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','%',' '},
+            {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','%',' '},
+            {'#','#','#','#','#','#','#','#','#','#','#','#'}
+        };
 
-    // aloca dinamicamente um jogador e um inimigo, ja chamando seus construtores e indicando os parametros
-    Jogador *_jogador = new Jogador(sf::Vector2f(600.0f,NIVEL_DA_PLATAFORMA));
-    Esqueleto* _esqueleto = new Esqueleto(sf::Vector2f(200.0f,NIVEL_DA_PLATAFORMA), _jogador);
-
-    // inicializa o gerenciador de eventos com o jogador
-    gEvento->set_jogador(_jogador);    
-
-    // casting de jogador e inimigo, transformando-os em Personagem para adicionarem no vector
-    Personagem *p1 = dynamic_cast < Personagem * > (_jogador);
-    Personagem *p2 = dynamic_cast < Personagem * > (_esqueleto);
-
-    // coloca os personagens no vector
-    _personagens.push_back(p1);
-    _personagens.push_back(p2);
-
-    executarJanela();
+        faseAtual = new ChegadaCastelo(mapa);
+        
+        if (faseAtual) {
+            Jogador* jogador = faseAtual->get_jogador();
+            if (jogador) {
+                gEvento->set_jogador(jogador);
+            }
+            executarJanela();
+        }
+    } catch (const std::exception& e) {
+        std::cout << "Erro na inicialização do jogo: " << e.what() << std::endl;
+        if (faseAtual) {
+            delete faseAtual;
+            faseAtual = nullptr;
+        }
+    }
 }
 
 void Jogo::executarJanela () {
@@ -39,7 +45,15 @@ void Jogo::executarJanela () {
         gGrafico->resetarRelogio();
         gEvento->executarLoopEvento();                                    // gerencia os eventos
         gGrafico->limparJanela();                               // limpa a janela
-        // atualiza a movimentacao dos personagens 
+
+        if (faseAtual){
+            faseAtual->executarFase();
+        }
+
+        gGrafico->mostrarNaTela();
+    }
+}
+        /*// atualiza a movimentacao dos personagens 
         for( int i=0 ; i < _personagens.size(); i++){          
             _personagens[i]->atualizar();                          // polimorfismo do metodo movimentar
         }
@@ -49,7 +63,7 @@ void Jogo::executarJanela () {
             Jogador* jogador = dynamic_cast < Jogador* > (_personagens[0]);     // cria uma copia do jogador principal com o downcasting
             if (jogador) {                                                      // verifica se foi possivel realizar o downcasting
                 sf::Vector2f posicaoJogador = jogador->get_posicao();           // pega a posicao do jogador 
-                               /* // Debug - imprime posição do jogador
+                                // Debug - imprime posição do jogador
                 std::cout << "Posicao do Jogador - X: " << posicaoJogador.x 
                          << " Y: " << posicaoJogador.y << std::endl;
 
@@ -63,7 +77,7 @@ void Jogo::executarJanela () {
                 // Debug - imprime posição da câmera depois da atualização
                 viewAtual = gGrafico->get_camera();
                 std::cout << "Camera depois - X: " << viewAtual.getCenter().x 
-                         << " Y: " << viewAtual.getCenter().y << std::endl;*/
+                         << " Y: " << viewAtual.getCenter().y << std::endl;
                 gGrafico->atualizaCamera(posicaoJogador);                       // atualiza a posicao da camera de acordo com a posicao do jogador principal
             }
         }
@@ -75,12 +89,39 @@ void Jogo::executarJanela () {
 
     }
     _personagens.clear();   // limpa o vector de personagens
+}*/
+
+void Jogo::mudarFase(Identificador idFase){
+      if (faseAtual){ 
+        delete faseAtual;
+        faseAtual = nullptr;
+   } 
+
+   switch (idFase) {
+    case Identificador::chegadaCastelo: {
+        std::vector < std::vector < char >> mapa = {
+        {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '},
+        {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '},
+        {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '},
+        {' ',' ',' ',' ',' ',' ',' ',' ',' ','%',' ',' '},
+        {' ',' ',' ',' ',' ',' ',' ',' ',' ','%',' ',' '},
+        {' ',' ',' ',' ',' ',' ',' ',' ',' ','%',' ',' '},
+        {' ',' ',' ',' ',' ',' ',' ',' ',' ','%',' ',' '},
+        {'#','#','#','#','#','#','#','#','#','#','#','#'}
+    };
+
+    faseAtual = new ChegadaCastelo(mapa);
+    break;
+    }
+    // adicionar as outras fases
+   }
+
 }
 
 Jogo::~Jogo () {
-    for (Personagem* p : _personagens) {
-        delete p;
-    }
-    delete _fundo;
+   if (faseAtual){ 
+    delete faseAtual;
+    faseAtual = nullptr;
+   } 
 
 }

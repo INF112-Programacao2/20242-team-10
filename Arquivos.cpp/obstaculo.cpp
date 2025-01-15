@@ -1,4 +1,6 @@
 #include "obstaculo.h"
+#include "jogador.h"
+
 
 // construtor
 Obstaculo::Obstaculo(sf::Vector2f posicao, sf::Vector2f tamanho, Identificador id) :
@@ -18,44 +20,41 @@ void Obstaculo::atualizar()
 // funcao que verifica a colisao do personagem com os obstaculos
 void Obstaculo::colisaoObstaculo(sf::Vector2f distancia, Personagem *personagem)
 {
-    // verifica se nao houver colisao, caso ambos os eixos nao sejam negativos, indica que nao ha sobreposicao, ou seja, que nao estao se colidindo
-    if (distancia.x >= 0.0f || distancia.y >= 0.0f) {
-        return;
-    }
+     if (!personagem) return;
 
     sf::Vector2f posicaoPersonagem = personagem->get_posicao();
     sf::Vector2f velocidadePersonagem = personagem->get_velocidade();
+    sf::Vector2f tamanhoPersonagem = personagem->get_tamanho();
 
-    // verifica em qual eixo a colisao ocorre mais, ou seja, em qual eixo houve maior sobreposicao e retorna qual eixo possui a menor colisao 
-    bool colisaoEixo_x = abs(distancia.x) < abs(distancia.y);
-
-    // resolve as colisoes
-    if (colisaoEixo_x){ 
-        if (posicaoPersonagem.x < _posicao.x){                                  // indica que o persongem esta a esquerda do obstaculo
-            posicaoPersonagem.x += distancia.x;                                 // move o personagem para a esquerda
+    // Verifica se a colisão é mais forte no eixo X ou Y
+    if (fabs(distancia.x) < fabs(distancia.y)) {
+        // Colisão horizontal
+        if (posicaoPersonagem.x < _posicao.x) {
+            posicaoPersonagem.x = _posicao.x - tamanhoPersonagem.x;
+        } else {
+            // Personagem está à direita
+            posicaoPersonagem.x = _posicao.x + _tamanho.x;
         }
-        else {                                                                  // indica que o personagem esta a direita do obstaculo
-            posicaoPersonagem.x -= distancia.x;                                 // move o personagem para a direita 
-        }
-        velocidadePersonagem.x = 0.0f;                                          // o personagem para 
-    }
-    else {
-        if (posicaoPersonagem.y < _posicao.y) {                                 // indica que o personagem esta acima do obstaculo       
-            posicaoPersonagem.y += distancia.y;                                 // move o personagem para cima
-            if (personagem->get_id() == Identificador::jogador){                // se esse personagem for um jogador
-                Jogador* jogador = dynamic_cast < Jogador* > (personagem);
-                jogador->podePular();                                           // sinaliza que ele pode pular pois nao tem nada acima
+    } else {
+        // Colisão vertical
+        if (posicaoPersonagem.y < _posicao.y) {
+            // Personagem está acima
+            posicaoPersonagem.y = _posicao.y - tamanhoPersonagem.y;
+            // Permite pulo se for jogador
+            if (personagem->get_id() == Identificador::jogador) {
+                Jogador* jogador = dynamic_cast<Jogador*>(personagem);
+                if (jogador) {
+                    jogador->podePular();
+                }
             }
-        else {                                                                  // indica que o personagem esta abaixo do obstaculo
-            posicaoPersonagem.y -= distancia.y;                                 // move o personagem para baixo
+        } else {
+            // Personagem está abaixo
+            posicaoPersonagem.y = _posicao.y + _tamanho.y;
         }
-        velocidadePersonagem.y = 0.0f;                                          // o personagem para 
     }
 
-    // atualiza os atibutos do personagem
-    personagem->set_posicao(posicaoPersonagem); 
-    personagem->set_velocidade(velocidadePersonagem);
-
+    personagem->set_posicao(posicaoPersonagem);
+    
 }
 
 

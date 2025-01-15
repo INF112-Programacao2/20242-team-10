@@ -1,4 +1,7 @@
 #include "jogador.h"
+#include "inimigo.h"
+#include "plataforma.h"
+#include "arma.h"
 #include <iostream>
 
 void Jogador::inicializarAnimacao()
@@ -10,34 +13,39 @@ void Jogador::inicializarAnimacao()
     _animacao.adicionarAnimacao("Parado.png", "PARADO", 10 , 0.10f , sf::Vector2f(6,2),origem,true);
     _animacao.adicionarAnimacao("Pulando.png", "PULAR", 3 , 0.10f , sf::Vector2f(6,2),origem,true);
     _animacao.adicionarAnimacao("Atacando.png", "ATACAR", 6 , 0.10f , sf::Vector2f(6,2),origem,true);
+    _animacao.adicionarAnimacao("tomandoDano.png", "TOMARDANO" , 1 , 0.20f , sf::Vector2f(6,2), origem, true);
+    _animacao.adicionarAnimacao("Morrendo.png", "MORTE", 10 , 0.20f , sf::Vector2f(6,2), origem, true);
     
 }
 
+// funcao que atualiza as animacoes do jogador: andar, parar, correr, morrer ...
 void Jogador::atualizarAnimacao()
 {
 
-
-    if (andando && estaNoChao && !atacando) {
-    //try{
+    if (morrendo) {
         if (!andaEsquerda)
-        _animacao.atualizar(DIREITA,"CORRER");
+            _animacao.atualizar(DIREITA,"MORTE");
         else 
-        _animacao.atualizar(ESQUERDA,"CORRER");
+            _animacao.atualizar(ESQUERDA,"MORTE");
+    _tempoMorte += gGrafico->get_tempo ();
+        if (_tempoMorte > DURACAO_JOGADOR_MORTE){
+            _tempoMorte = 0.0f;
+        }
     }
-    else if (!andando && estaNoChao && !atacando) {
-        if (!andaEsquerda)
-            _animacao.atualizar(DIREITA,"PARADO");
-        else 
-            _animacao.atualizar(ESQUERDA,"PARADO");
-    }
-    else if (!estaNoChao && !atacando){
+    else if (!estaNoChao) {
         if (!andaEsquerda)
         _animacao.atualizar (DIREITA,"PULAR");
         else 
         _animacao.atualizar (ESQUERDA,"PULAR"); 
     }
+    else if (levandoDano) {
+        if (!andaEsquerda)
+        _animacao.atualizar (DIREITA,"TOMARDANO");
+        else 
+        _animacao.atualizar (ESQUERDA,"TOMARDANO"); 
+    }
     else if (atacando){
-        _tempoAtaque += gGrafico->get_tempo();
+              _tempoAtaque += gGrafico->get_tempo();
         if (_tempoAtaque >= DURACAO_ATAQUE_TOTAL){
             atacando = false;
             _tempoAtaque = 0.0f;
@@ -48,36 +56,193 @@ void Jogador::atualizarAnimacao()
         else 
         _animacao.atualizar (ESQUERDA,"ATACAR"); 
     }
-    
-    //catch (const std::exception& e) {
-    //    std::cout << "ERRO na animacao: " << e.what() << std::endl;*/
- 
+    else if (andando){
+        if (!andaEsquerda)
+        _animacao.atualizar(DIREITA,"CORRER");
+        else 
+        _animacao.atualizar(ESQUERDA,"CORRER");
+    }
+    else {
+        if (!andaEsquerda)
+            _animacao.atualizar(DIREITA,"PARADO");
+        else 
+            _animacao.atualizar(ESQUERDA,"PARADO");
+    }
 }
 
-// construtor que usa o construtor de Personagem
+void Jogador::inicializarBarraVida()
+{
+    sf::Vector2f tamanhoTubo = sf::Vector2f (TAMANHO_BARRA_VIDA_EIXO_X,TAMANHO_BARRA_VIDA_EIXO_Y);           // pega o tamanho do tubo da barra de vida
+    _tuboBarraVida.setSize (tamanhoTubo);                                                                    // define o tamanho do tubo de barra de vida
+    _barraVida.setSize(tamanhoTubo);                                                                         // define o tamanho da barra de vida (interna ao tubo da vida)
+    sf::Texture* texturaVida = new sf::Texture();                                                            // aloca um espaco para a textura da barra de vida
+    sf::Texture* texturaTubo = new sf::Texture();                                                            // aloca um espaco para a textura do tudo da barra de vida 
+    texturaVida-> loadFromFile("VidaJogador.png");                                                          // carrega a textura da barra de vida
+    texturaTubo-> loadFromFile("BarraVida.png");                                                            // carrega a textura do tubo da barra de vida
+    // atualiza as texturas
+    _barraVida.setTexture(texturaVida);                                                                 
+    _tuboBarraVida.setTexture(texturaTubo);
+}
+
+// funcao que atualiza a posicao e o tamanho e quanta vida o personagem possui
+void Jogador::atualizarBarraVida()
+{
+    // pega a posicao e o tamanho da janela
+    sf::Vector2f posicaoJanela = gGrafico->get_camera().getCenter();
+    sf::Vector2f tamanhoJanela (TAMANHO_TELA_X,TAMANHO_TELA_Y);
+    // atualiza a posicao da barra de vida
+    sf::Vector2f posicaoBarra = sf::Vector2f (posicaoJanela.x - tamanhoJanela.x / 2.0f + 10.0f, posicaoJanela.y - tamanhoJanela.y / 2.0f + 30.0f);     
+    _tuboBarraVida.setPosition(posicaoBarra);
+    _barraVida.setSize(sf::Vector2f((TAMANHO_BARRA_VIDA_EIXO_X - 40.0f) * (_vida / 100.0f), TAMANHO_BARRA_VIDA_EIXO_Y - 13.0f));
+    _barraVida.setPosition(sf::Vector2f(posicaoBarra.x + 7.0f, posicaoBarra.y + _tuboBarraVida.getSize().y / 2.0f - _barraVida.getSize().y / 2.0f));
+
+}
+
+void Jogador::inicializarNivel()
+{
+
+}
+
+void Jogador::atualizarNivel()
+{
+}
+
+
+void Jogador::inicializarBarraXP()
+{
+    // pega o tamanho do tubo da barra de vida
+    sf::Vector2f tamanhoTubo = sf::Vector2f (TAMANHO_BARRA_VIDA_EIXO_X,TAMANHO_BARRA_VIDA_EIXO_Y);        
+    // define o tamanho do tudo da barra de xp 
+    _tuboBarraXP.setSize (tamanhoTubo);
+    // aloca um espaco para as texturas da barra de xp e do tubo da barra de xp                                                                 
+    sf::Texture* texturaXP = new sf::Texture();                                                            
+    sf::Texture* texturaBarraXP = new sf::Texture();
+    // carrega as texturas                                                            
+    texturaXP-> loadFromFile("XPJogador.png");                                                         
+    texturaBarraXP-> loadFromFile("BarraXP.png");                                                            
+    // atualiza as texturas
+    _barraXP.setTexture(texturaXP);                                                                 
+    _tuboBarraXP.setTexture(texturaBarraXP);
+
+}
+
+void Jogador::atualizarBarraXP()
+{
+    // pega a posicao e o tamanho da janela
+    sf::Vector2f posicaoJanela = gGrafico->get_camera().getCenter();
+    sf::Vector2f tamanhoJanela (TAMANHO_TELA_X,TAMANHO_TELA_Y);
+    // atualiza a posicao da barra de vida
+    sf::Vector2f posicaoBarra = sf::Vector2f ((posicaoJanela.x + tamanhoJanela.x / 2.0f - _tuboBarraXP.getSize().x - 10.0f), posicaoJanela.y + tamanhoJanela.y / 2.0f - 30.0f);     
+    _tuboBarraXP.setPosition(posicaoBarra);
+    _barraXP.setSize(sf::Vector2f((TAMANHO_BARRA_VIDA_EIXO_X - 40.0f) * (_experiencia.get_experiencia() / PROXIMO_NIVEL), TAMANHO_BARRA_VIDA_EIXO_Y - 13.0f));
+    _barraXP.setPosition(sf::Vector2f((posicaoBarra.x + _tuboBarraVida.getSize().x - _barraXP.getSize().x - 7.0f), posicaoBarra.y + _tuboBarraXP.getSize().y / 2.0f - _barraXP.getSize().y / 2.0f));
+}
+
+void Jogador::inicializarXP()
+{
+}
+
+void Jogador::atualizarXP()
+{
+}
+
+// construtor 
 Jogador::Jogador (sf::Vector2f posicao) :
-    Personagem (posicao,sf::Vector2f (TAMANHO_JOGADOR_X,TAMANHO_JOGADOR_Y), sf::Vector2f(VELOCIDADE_JOGADOR_X,VELOCIDADE_JOGADOR_Y), Identificador::jogador) ,
-     estaNoChao (true) , _tempoAtaque(0.0f)
+    Personagem (posicao,sf::Vector2f (TAMANHO_JOGADOR_X,TAMANHO_JOGADOR_Y), sf::Vector2f(VELOCIDADE_JOGADOR_X,VELOCIDADE_JOGADOR_Y), Identificador::jogador , DURACAO_JOGADOR_MORTE, DURACAO_JOGADOR_SOFRER_DANO) ,
+     estaNoChao (false) , _tempoAtaque(0.0f) 
     {
         inicializarAnimacao();
-        //inicializarBarraVida();
+        inicializarBarraVida();
+        inicializarBarraXP ();
+        inicializarNivel ();
+        inicializarXP ();
 
+        Arma* espada = new Arma (Identificador::espada_jogador);
+        espada->set_tamanho (sf::Vector2f(TAMANHO_ARMA, TAMANHO_ARMA));
+        set_arma (espada);
+        if (_arma){
+        _arma->set_personagem(this);
+        _arma->set_dano(_experiencia.get_forca());
+        }
         /*if (_arma != nullptr){
             set_arma(arma);
             _arma->set_dano()
         }*/
        //gGrafico->set_limiteObjeto(sf::IntRect(_posicao.x,_posicao.y,_tamanho.x,_tamanho.y));
+       
     }
     
 // destrutor
-Jogador::~Jogador () {
-
+Jogador::~Jogador () 
+{
+    // deleta as texturas utilizadas por meio de ponteiros
+    if (_tuboBarraVida.getTexture ()){
+        delete(_tuboBarraVida.getTexture());
+    }
+    if (_barraVida.getTexture ()){
+        delete(_barraVida.getTexture());
+    }
+    if (_tuboBarraXP.getTexture ()){
+        delete(_tuboBarraXP.getTexture());
+    }
+    if (_barraXP.getTexture ()){
+        delete(_barraXP.getTexture());
+    }
 }
 
+// funcao que retorna se o jogador esta no chao (na plataforma)
 bool Jogador::get_estaNoChao()
 {
     return estaNoChao;
 }
+
+// funcao que retorna se o jogador esta andando
+bool Jogador::estaAndando()
+{
+    return andando;
+}
+
+// funcao que atualiza caso o jogador esteja colidindo com uma porta ou nao
+void Jogador::set_colidirPorta(bool colidindoPorta)
+{
+    this->colisaoPorta = colidindoPorta;
+}
+
+// funcao que retorna se o jogador esta colidindo ou nao com uma porta 
+bool Jogador::estaColidindoPorta()
+{
+    return colisaoPorta;
+}
+
+// funcao que atualiza caso o jogador esteja abrindo uma porta ou nao
+void Jogador::set_abrirPorta(bool abrirPorta)
+{
+    this->abrirPorta = abrirPorta;
+}
+
+// funcao que retorna se o personagem esta ou nao abrindo uma porta
+bool Jogador::estaAbrindoPorta()
+{
+    return abrirPorta;
+}
+
+// funcao que atualiza a vida do jogador
+void Jogador::set_vida(float vida)
+{
+    _vida += vida;
+    if (_vida >= 100.0f) {
+        _vida = 100.0f;
+    }
+}
+
+// funcao que adiciona experiencia ao jogador
+void Jogador::adicionarXP(float experiencia)
+{
+    _experiencia.adicionarExperiencia(experiencia);
+    //
+    inicializarXP();
+}
+
 
 void Jogador::pular()
 {
@@ -95,13 +260,47 @@ void Jogador::podePular()
     estaNoChao = true;
 }
 
+
 void Jogador::colisao(Entidade *entidade, sf::Vector2f distancia)
 {
+    switch (entidade->get_id()) {
+        case (Identificador::plataforma): {
+            Plataforma* plataforma = dynamic_cast<Plataforma*>(entidade);
+            if (plataforma) {
+                plataforma->colisaoObstaculo(distancia, this);
+            }
+            break;
+        }
+        case (Identificador::espada_inimigo) : {
+            Arma* arma = dynamic_cast < Arma* > (entidade);
+            tomarDano(arma->get_dano());
+            break;
+        }
+        case (Identificador::esqueleto): {
+            // Colisão com o inimigo
+            sf::Vector2f posicaoAtual = get_posicao();
+            sf::Vector2f posicaoInimigo = entidade->get_posicao();
+
+            // Empurra o jogador para fora do inimigo
+            if (fabs(distancia.x) < fabs(distancia.y)) {
+                posicaoAtual.x += (posicaoAtual.x < posicaoInimigo.x) ? -2.0f : 2.0f;
+            } else {
+                posicaoAtual.y += (posicaoAtual.y < posicaoInimigo.y) ? -2.0f : 2.0f;
+            }
+            set_posicao(posicaoAtual);
+            break;
+        }
+
+        case (Identificador::porta): {
+            colisaoPorta = true;
+            break;
+        }
+    }
 }
 
 void Jogador::atacar(bool atacar)
 {
-    if (atacar){
+    if (atacar && !morrendo){
         this->atacando = true;
         this->_tempoAtaque = 0.0f;
     }
@@ -111,6 +310,13 @@ void Jogador::atacar(bool atacar)
 void Jogador::atualizar () {
         atualizarPosicao();
         atualizarAnimacao();
+        atualizarBarraVida();
+        atualizarBarraXP();
+        atualizarNivel();
+        atualizarXP ();
+
+        colisaoPorta = false;
+
 
     /*if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {          // se a tecla pressionada for A ou seta para esquerda, move para esquerda
         _corpo.move(-_velocidade.x,0.0f);
@@ -128,6 +334,9 @@ void Jogador::atualizar () {
 
 void Jogador::atualizarPosicao()
 {
+    // Salva a posição antiga
+    sf::Vector2f posicaoAntiga = _corpo.getPosition(); // ttemporario
+
     // Movimento horizontal
     if (andando) {
         if (andaEsquerda)
@@ -151,6 +360,11 @@ void Jogador::atualizarPosicao()
 void Jogador::desenhar()
 {
     gGrafico->desenhar (_corpo);
+    gGrafico-> desenhar (_tuboBarraVida);
+    gGrafico-> desenhar (_barraVida);
+    gGrafico-> desenhar (_tuboBarraXP);
+    gGrafico-> desenhar (_barraXP);
+
 }
 
 /*void Jogador::atualizarPosicao()

@@ -5,9 +5,9 @@
 #include <vector>
 #include "jogador.h"
 #include "entidade.h"
-#include "inimigo.h"
-#include "obstaculo.h"
-#include "plataforma.h"
+
+
+class Arma;
 
 class ListaEntidade {
 private:

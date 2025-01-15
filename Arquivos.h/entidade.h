@@ -4,6 +4,8 @@
 #include "gerenciadorgrafico.h"
 #include "identificadores.h"
 
+class Arma;
+
 class Entidade {
 protected:
     sf::RectangleShape _corpo;

@@ -8,7 +8,12 @@ enum Identificador {
     plataforma,
     fundo,
     porta,
-    esqueleto
+    esqueleto,
+    chegadaCastelo,
+    fundo_chegadaCastelo,
+    arma,
+    espada_inimigo,
+    espada_jogador
 
 
 };
