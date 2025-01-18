@@ -3,6 +3,7 @@
 #include "personagem.h"
 #include "inimigo.h"
 #include "jogador.h"
+#include <iostream>
 
 // construtor da classe
 Arma::Arma(Identificador id) :
@@ -43,7 +44,10 @@ void Arma::set_tamanho(sf::Vector2f tamanho)
 // funcao que verifica as colisoes da arma com outras entidades
 void Arma::colisao(Entidade *entidade, sf::Vector2f distancia)
 {
-    if (_personagem == nullptr) return;
+        if (_personagem == nullptr) {
+        std::cout << "Debug - Arma sem personagem" << std::endl;
+        return;
+    }
 
     // Se a arma pertence ao jogador
     if (_personagem->get_id() == Identificador::jogador) {
@@ -61,11 +65,12 @@ void Arma::colisao(Entidade *entidade, sf::Vector2f distancia)
             }
         }
     }
+    
     // Se a arma pertence ao inimigo
     else if (_personagem->get_id() == Identificador::esqueleto) {
         if (entidade->get_id() == Identificador::jogador) {
             Jogador* jogador = dynamic_cast<Jogador*>(entidade);
-            if (jogador && !jogador->estaLevandoDano() && !jogador->estaMorrendo()) {
+            if (jogador && !jogador->estaLevandoDano() && !jogador->estaMorrendo() && _personagem->estaAtacando()) {
                 jogador->tomarDano(_dano);
             }
         }
@@ -74,11 +79,36 @@ void Arma::colisao(Entidade *entidade, sf::Vector2f distancia)
 
 void Arma::atualizar()
 {
-    if (_personagem) {
+        if (_personagem) {
+        sf::Vector2f posicaoPersonagem = _personagem->get_corpo().getPosition();
+        bool andaEsquerda = _personagem->estaAndandoParaEsquerda();
+    
+        if (_personagem->estaAtacando()) {
+            
+            // Atualiza a posição da arma
+            if (andaEsquerda) {
+                _corpo.setPosition(posicaoPersonagem.x - _tamanho.x, posicaoPersonagem.y);
+            } else {
+                _corpo.setPosition(posicaoPersonagem.x + _personagem->get_tamanho().x, posicaoPersonagem.y);
+            }
+            
+            // Garante que a arma tenha dano durante o ataque
+            if (_personagem->get_id() == Identificador::esqueleto) {
+                _dano = _personagem->get_forca();
+            }
+        } else {
+            _corpo.setPosition(-1000, -1000);
+            if (_personagem->get_id() == Identificador::esqueleto) {
+                _dano = 0;  // Zera o dano quando não está atacando
+            }
+        }
+    }
+    /*if (_personagem) {
         sf::Vector2f posicaoPersonagem = _personagem->get_corpo().getPosition();
         bool andaEsquerda = _personagem->estaAndandoParaEsquerda();
     
         if (_personagem->estaAtacando ()){
+            std::cout << "Arma atacando! ID: " << (int)_id << std::endl; // Debug
             if (andaEsquerda) {
                 _corpo.setPosition (posicaoPersonagem.x - _tamanho.x, posicaoPersonagem.y);
             }
@@ -89,13 +119,13 @@ void Arma::atualizar()
     }
     else {
         _corpo.setPosition (-1000,-1000);      // atualiza fora da tela quando nao estiver em combate
-    }
+    }*/
 }
 
 void Arma::desenhar()
 {
     if (_personagem && _personagem->estaAtacando()){
-        _corpo.setFillColor(sf::Color::Red); // apenas para debug
+        _corpo.setFillColor(sf::Color::Red);    // apenas para debug
         gGrafico->desenhar (_corpo);
     }
 }

@@ -13,6 +13,10 @@
 #define DURACAO_JOGADOR_MORTE 1.0f
 #define DURACAO_JOGADOR_SOFRER_DANO 0.3f
 
+#define DANO_JOGADOR 35.0f
+#define DEFESA_JOGADOR 30.0f
+#define FORCA_JOGADOR 20.0f
+
 class Jogador : public Personagem {
 private:
     bool estaNoChao;
@@ -26,6 +30,9 @@ private:
     sf::RectangleShape _tuboBarraVida;
     sf::RectangleShape _tuboBarraXP;
     sf::RectangleShape _barraXP;
+    //Texto _textoXP;
+
+    //std::vector < Chave* > _chaves;
 
     // metodos responsaveis pela animacao do jogador 
     void inicializarAnimacao ();
@@ -42,6 +49,9 @@ private:
     void inicializarXP ();
     void atualizarXP();
 
+    // chave
+    void atualizarChaves ();
+
 
 public:
     // construtor
@@ -57,8 +67,11 @@ public:
     bool estaAbrindoPorta ();
     void set_vida (float vida);
     void adicionarXP (float experiencia);
+    //std::vector < Chave* > get_chaves ();
     // metodos da classe
     //void tomarDano(float dano);
+    //void adicionarChave (Chave* chave);
+   // void removerChave (Chave* chave);
     void pular ();
     void podePular ();
     virtual void colisao (Entidade* entidade,sf::Vector2f distancia);

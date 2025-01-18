@@ -23,7 +23,7 @@ protected:
     
     void criarPlataforma (sf::Vector2f posicao, sf::Vector2f tamanho, std::string tipo, sf::Vector2f escala);
     void criarParede ();
-    void criarPorta ();
+    void criarPorta (sf::Vector2f posicao, sf::Vector2f tamanho);
 
 
 public:

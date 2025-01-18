@@ -7,9 +7,11 @@
 // funcao que atualiza todos os metodos da classe
 void Inimigo::atualizar() 
 {
+        atualizarTempoAtaque();         // debug
+
         moverInimigo();
         atualizarPosicao();
-        atualizarTempoAtaque();
+       // atualizarTempoAtaque();
         atualizarAnimacao();
         atualizarBarraVida ();
         atualizarNivel();
@@ -36,6 +38,7 @@ void Inimigo::moverInimigo ()
     
     // verifica se o jogador entrou no raio de combate, se entrar o inimigo fica parado, senao atualiza sua movimentacao (anda de um lado para o outro)
     if (fabs(posicaoJogador.x - posicaoInimigo.x) <= RAIO_DE_COMBATE_X && fabs(posicaoJogador.y - posicaoInimigo.y) <= RAIO_DE_COMBATE_Y) {  // se estiver dentro do raio
+        andaEsquerda = (posicaoJogador.x < posicaoInimigo.x);              // inimigo fica olhando para o lado que o personagem esta 
         parar();
     }
     else 
@@ -54,8 +57,23 @@ void Inimigo::colisao(Entidade *entidade, sf::Vector2f distancia)
             }
             break;
         }
+        // debug 
+        case (Identificador::jogador): {         
+            // Se não estiver já atacando, morrendo ou levando dano
+            if (!atacando && !morrendo && !levandoDano) {
+                atacar(true);
+                // Se tiver arma, atualiza a posição dela
+                if (_arma) {
+                    _arma->atualizar();
+                } 
+            }
+            break; 
+        }
+            
+        
 
-        case (Identificador::jogador): {
+        /*case (Identificador::jogador): {
+            std::cout << "esqueleto colidiu com jogador" << std::endl;
             // Colisão com o jogador
             /*sf::Vector2f posicaoAtual = get_posicao();
             sf::Vector2f posicaoJogador = entidade->get_posicao();
@@ -66,20 +84,26 @@ void Inimigo::colisao(Entidade *entidade, sf::Vector2f distancia)
             } else {
                 posicaoAtual.y += (posicaoAtual.y < posicaoJogador.y) ? -2.0f : 2.0f;
             }
-            set_posicao(posicaoAtual);*/
+            set_posicao(posicaoAtual);
 
             // Inicia ataque quando colide com jogador
             if (!atacando && !morrendo){
+                std::cout << "atacando" << std::endl;
                 atacar(true);    
             }
             break;
-        }
+        }*/
         case (Identificador::espada_jogador) : {
             Arma* arma = dynamic_cast < Arma* > (entidade);
             if (arma && _jogador->estaAtacando()){
             tomarDano (arma->get_dano());
             std::cout << _vida << std::endl;
             }
+            break;
+        }
+        // debug
+        default: {
+            std::cout << "Esqueleto colidiu com outra entidade: " << (int)entidade->get_id() << std::endl;
             break;
         }
     }
@@ -94,6 +118,38 @@ void Inimigo::atualizarPosicao()
         else                                                    
             _corpo.move(VELOCIDADE_DO_INIMIGO_EIXO_X, 0.0f);                        // senao, atualiza o inimigo para a direita
     }
+}
+
+// funcao que desenha as coisas do inimigo na tela
+void Inimigo::desenhar()
+{ 
+        if (!morrendo || _tempoMorte <= _duracaoAnimacaoMorte) {
+        if (_corpo.getTexture() == nullptr) {
+            std::cout << "AVISO: Inimigo sem textura!" << std::endl;
+        }
+        if (_corpo.getFillColor().a == 0) {
+            std::cout << "AVISO: Inimigo transparente!" << std::endl;
+        }
+        
+        // Desenha apenas se for visível
+        if (_corpo.getFillColor().a > 0) {
+            gGrafico->desenhar(_corpo);
+            gGrafico->desenhar(_barraVida);
+            if (_arma) {
+                _arma->desenhar();
+            }
+        }
+    }
+    
+    
+    /*
+    if (!morrendo || _tempoMorte <= _duracaoAnimacaoMorte){
+        gGrafico->desenhar(_corpo);
+        gGrafico->desenhar (_barraVida);
+        if (_arma){
+            _arma->desenhar ();
+        }
+    }*/
 }
 
 // funcao que faz o inimigo perseguir o jogador principal
@@ -129,12 +185,16 @@ float Inimigo::get_experiencia()
     return XP;
 }
 
+bool Inimigo::podeRemover()
+{
+    return _podeRemover;
+}
+
 // construtor
 Inimigo::Inimigo (sf::Vector2f posicao, sf::Vector2f tamanho, Jogador *jogador, Identificador id, float tempoMorte , float tempoAtaque , float experiencia) :
-    Personagem (posicao,tamanho,sf::Vector2f(VELOCIDADE_DO_INIMIGO_EIXO_X, VELOCIDADE_DO_INIMIGO_EIXO_Y), Identificador::inimigo, tempoMorte , 0.6f),
-    _relogio() , _jogador(jogador) , _duracaoAnimacaoAtaque (tempoAtaque) , XP (experiencia), _tempoAtaque(0.0f) , _tempoProtecaoAtaque(0.0f), _protegido(false)
+    Personagem (posicao,tamanho,sf::Vector2f(VELOCIDADE_DO_INIMIGO_EIXO_X, VELOCIDADE_DO_INIMIGO_EIXO_Y), id, tempoMorte , 0.6f),
+    _relogio() , _jogador(jogador) , _duracaoAnimacaoAtaque (tempoAtaque) , XP (experiencia), _tempoAtaque(0.0f) , podeAtacarJogador(true), _podeRemover (false)
 {
-    //_corpo.setFillColor (sf::Color::Blue);  // inicializa a cor do inimigo com azul
     inicializarBarraVida ();
 }
 
@@ -154,7 +214,19 @@ void Inimigo::tomarDano(float dano)
         _tempoProtecaoAtaque = 0.0f;
     }
 }
-// metodo que atualiza o movimento de um lado para o outro dos inimigos  
+void Inimigo::atacar(bool atacar)
+{
+    if (atacar && !atacando && !morrendo && !levandoDano) {
+        atacando = true;
+        _tempoAtaque = 0.0f;
+        
+        if (_arma) {
+            _arma->set_dano(_experiencia.get_forca());
+            _arma->atualizar();
+        }
+    }
+}
+// metodo que atualiza o movimento de um lado para o outro dos inimigos
 void Inimigo::atualizarMovimentacao()
 {
     float tempo = _relogio.getElapsedTime().asSeconds();                            // pega o tempo em segundos
@@ -188,18 +260,23 @@ void Inimigo::inicializarBarraVida()
 // funcao que atualiza os tempos de animacao do ataque do inimigo
 void Inimigo::atualizarTempoAtaque()
 {
-    if (atacando && !levandoDano){
+    if (atacando && !levandoDano) {
         _tempoAtaque += gGrafico->get_tempo();
         if (_tempoAtaque > _duracaoAnimacaoAtaque) {
             atacando = false;
+            podeAtacarJogador = true;
             _tempoAtaque = 0.0f;
         }
     }
-    else if (levandoDano){
-        _tempoAtaque = 0.0f;
-        atacando = false;
-    }
+        
+        else if (levandoDano) {
+            _tempoAtaque = 0.0f;
+            atacando = false;
+            podeAtacarJogador = true;
+            }
 }
+
+
 
 void Inimigo::atualizarAnimacao()
 {
@@ -208,8 +285,8 @@ void Inimigo::atualizarAnimacao()
         _animacao.atualizar(DIREITA,"MORTE");
         _tempoMorte += gGrafico->get_tempo();
         if (_tempoMorte > _duracaoAnimacaoMorte){
-            // podeRemover
-            _tempoMorte = 0.0f;
+            _podeRemover = true;
+           // _tempoMorte = 0.0f;
 
         }
     }

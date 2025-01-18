@@ -11,7 +11,6 @@ private:
     //float _proximoNivel;
     float _forca;
     float _defesa;
-    float _vida;
 
 public:
     // construtor default
@@ -27,10 +26,8 @@ public:
     float get_experiencia ();
     float get_forca();
     float get_defesa();
-    float get_vida();
     void set_forca(float forca);
     void set_defesa(float defesa);
-    void set_vida(float vida);
 
 };
 

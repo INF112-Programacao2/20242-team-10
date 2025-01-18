@@ -3,10 +3,10 @@
 void Plataforma::inicializarAnimacao()
 {
     if ( _tipo == "Chao de madeira"){
-        _textura = gGrafico->carregarTextura(TEXTURA_CHAO_DE_MADEIRA);
+        sf::Texture& textura = gGrafico->carregarTextura(TEXTURA_CHAO_DE_MADEIRA);
+        _corpo.setTexture (&textura);
     }
 
-    _corpo.setTexture (&_textura);
     _corpo.setScale(_escala);
 
 }

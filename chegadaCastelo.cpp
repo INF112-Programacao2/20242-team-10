@@ -23,6 +23,7 @@ void ChegadaCastelo::criarFundo()
 
 void ChegadaCastelo::criarMapa()
 {
+        std::cout << "Iniciando criação do mapa..." << std::endl;
 
     if (!_mapa.empty() && !_mapa[0].empty()){            // verifica se a matriz do mapa nao esta vazia, tanto na coluna quanto nas linhas
         int linhas = _mapa.size();                       // pega o tamanho das linhas
@@ -34,13 +35,19 @@ void ChegadaCastelo::criarMapa()
                     criarPlataforma(sf::Vector2f(j*100.0f,NIVEL_DA_PLATAFORMA + 75.0f),sf::Vector2f(100.0f,100.0f),"Chao de madeira",sf::Vector2f(1.0f,1.0f));
                 }
                 else if (_mapa[i][j] == '%'){
-                    criarPlataforma (sf::Vector2f(j*100.0f,i*100.0f),sf::Vector2f(100.0f,175.0f),"Chao de madeira",sf::Vector2f(1.0f,1.0f));
+                    //sf::Vector2f posicaoChave (850.0f,NIVEL_DA_PLATAFORMA);
+                    //sf::Vector2f tamanhoChave (40.0f,40.0f);
+                    criarPorta (sf::Vector2f(j*75.0f,NIVEL_DA_PLATAFORMA - 30.0f),sf::Vector2f(50.0f,100.0f));
                 }
             }
         }
     }
 
     criarPersonagem(sf::Vector2f(200.0f,NIVEL_DA_PLATAFORMA), Identificador::jogador);
+    std::cout << "Criando esqueleto..." << std::endl;
     criarPersonagem(sf::Vector2f(500.0f,NIVEL_DA_PLATAFORMA ),Identificador::esqueleto);
+    std::cout << "Esqueleto criado com sucesso" << std::endl;
+
+    std::cout << "Total de entidades após criação: " << _listaPersonagens->get_tamanhoLista() << std::endl;
 
 }

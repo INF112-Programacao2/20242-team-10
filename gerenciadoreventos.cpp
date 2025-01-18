@@ -34,6 +34,11 @@ void GerenciadorEvento::verificarTeclaPressionada(sf::Keyboard::Key tecla)
     else if ( tecla == sf::Keyboard::Escape){
         _gGrafico->fecharJanela();
     }
+    else if ( tecla == sf::Keyboard::E) {
+        if (_jogador->estaColidindoPorta ()){
+            _jogador->set_abrirPorta(true);
+        }
+    }
 
 }
 
@@ -41,6 +46,9 @@ void GerenciadorEvento::verificarTeclaSolta(sf::Keyboard::Key tecla)
 {  
     if ( tecla == sf::Keyboard::A || tecla == sf::Keyboard::D || tecla == sf::Keyboard::Left || tecla == sf::Keyboard::Right ){
     _jogador->parar();
+    }
+    else if (tecla == sf::Keyboard::E) {
+        _jogador->set_abrirPorta(false);
     }
 }
 

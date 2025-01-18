@@ -3,6 +3,7 @@
 #include "esqueleto.h"
 #include "arma.h"
 #include "plataforma.h"
+#include "porta.h"
 
 // inicializacao dos membros estaticos
 Jogador* Fase::_jogador = nullptr;
@@ -22,36 +23,51 @@ void Fase::criarParede()
 {
 }
 
-void Fase::criarPorta()
+// funcao que criar a porta junto a chave
+void Fase::criarPorta(sf::Vector2f posicao, sf::Vector2f tamanho)
 {
+    
+    
+    Porta* porta = new Porta (posicao, tamanho, Identificador::porta); 
+    if (porta == nullptr){
+        throw std::runtime_error ("Nao foi possivel criar a porta");
+    }
+
+    _listaObstaculos->adicionarEntidade(porta);
 }
 
 void Fase::criarPersonagem(sf::Vector2f posicao, Identificador id)
 {
-       if (id == Identificador::jogador){
-        if (_jogador != nullptr){
-            throw std::invalid_argument ("O jogador ja existe, nao foi possivel cria-lo");
+    if (id == Identificador::jogador) {
+        if (_jogador != nullptr) {
+            throw std::invalid_argument("O jogador ja existe, nao foi possivel cria-lo");
         }
-        _jogador = new Jogador(posicao);
-        // O jogador já herda de Entidade, então não precisa de dynamic_cast
-        _listaPersonagens->adicionarEntidade(_jogador);
         
-        // A arma também herda de Entidade
-        if (_jogador->get_arma()){
+        _jogador = new Jogador(posicao);
+        
+        _listaPersonagens->adicionarEntidade(_jogador);
+        if (_jogador->get_arma()) {
             _listaPersonagens->adicionarEntidade(_jogador->get_arma());
         }
     }
-    else if (id == Identificador::esqueleto){
-        if(_jogador == nullptr){
-            throw std::invalid_argument ("Nao foi possivel criar o esqueleto");
+    else if (id == Identificador::esqueleto) {
+            if (!_jogador) {
+                throw std::runtime_error("Não foi possível criar o esqueleto - jogador nulo");
+            }
+            
+            Esqueleto* esqueleto = new Esqueleto(posicao, _jogador);
+            if (!esqueleto) {
+                throw std::runtime_error("Falha ao alocar memória para o esqueleto");
+            }
+
+            _listaPersonagens->adicionarEntidade(esqueleto);
+            
+            std::cout << "Esqueleto criado na posição: " << posicao.x << ", " << posicao.y << std::endl;
+
+            if (esqueleto->get_arma()) {
+                _listaPersonagens->adicionarEntidade(esqueleto->get_arma());
+            }
         }
-        Esqueleto* esqueleto = new Esqueleto(posicao, _jogador);
-        if (esqueleto == nullptr) {
-            throw std::invalid_argument("Nao foi possivel criar o esqueleto");
-        }
-        // O esqueleto já herda de Entidade
-        _listaPersonagens->adicionarEntidade(esqueleto);
-    }
 }
 
 // construtor
@@ -74,25 +90,18 @@ Fase::Fase(Identificador idFase, Identificador idFundo) :
 // destrutor
 Fase::~Fase()
 {
-    if (_listaObstaculos != nullptr) {
-        delete (_listaObstaculos);
+    if (_listaObstaculos) {
+        delete _listaObstaculos;
         _listaObstaculos = nullptr;
     }
 
-    if (_listaPersonagens != nullptr) {
-        if (_jogador != nullptr){
-            delete (_listaPersonagens);
-            _jogador = nullptr;
-        }
-        else {
-            delete (_listaPersonagens);
-        }
-
+    if (_listaPersonagens) {
+        delete _listaPersonagens;
         _listaPersonagens = nullptr;
     }
 
-    if (gColisao != nullptr){
-        delete (gColisao);
+    if (gColisao) {
+        delete gColisao;
         gColisao = nullptr;
     }
 }
@@ -136,9 +145,12 @@ void Fase::executarFase()
         _fundo.executar();
 
         gGrafico->atualizaCamera(_jogador->get_posicao());
-        _listaPersonagens->executar();
+        
         _listaObstaculos->executar();
 
+        _listaPersonagens->executar();
+
+    
         gColisao->executar();
     }
     else 

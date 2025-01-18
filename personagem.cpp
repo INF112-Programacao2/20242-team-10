@@ -1,27 +1,29 @@
 #include "personagem.h"
 #include "arma.h"
+#include <iostream>
+
 
 // funcao que atualiza a animacao da barra de vida
 void Personagem::atualizarBarraVida()
 {
-    /*sf::Vector2f posicaoBarraVida (sf::Vector2f (_posicao.x + _tamanho.x / 2.0f - _corpo.getSize().x / 2.0f, _posicao.y - 20.0f));          // atualiza a posicao da barra, sempre acima do personagem, de acordo com sua posicao 
+    sf::Vector2f posicaoBarraVida (sf::Vector2f (_posicao.x + _tamanho.x / 2.0f - _corpo.getSize().x / 2.0f, _posicao.y - 20.0f));          // atualiza a posicao da barra, sempre acima do personagem, de acordo com sua posicao 
     _barraVida.setPosition(posicaoBarraVida);                                                                                               // atualiza a posicao
-    _barraVida.setSize(sf::Vector2f ((_vida/100.0f)*TAMANHO_BARRA_VIDA_EIXO_X, TAMANHO_BARRA_VIDA_EIXO_Y ));    */                            // atualiza o tamanho da barra de vida de acordo com a vida
+    _barraVida.setSize(sf::Vector2f ((_vida/100.0f)*TAMANHO_BARRA_VIDA_EIXO_X, TAMANHO_BARRA_VIDA_EIXO_Y ));                               // atualiza o tamanho da barra de vida de acordo com a vida
 }
 
 // funcao que atualiza a animacao do nivel
 void Personagem::atualizarNivel()
 {
     sf::Vector2f posicaoBarraVida = _barraVida.getPosition();
-
-
+    _textoNivel.set_posicao (sf::Vector2f(posicaoBarraVida.x - _textoNivel.get_tamanho().x, posicaoBarraVida.y - _textoNivel.get_tamanho().y / 2.0f));
 }
 
 // construtor
 Personagem::Personagem (sf::Vector2f posicao, sf::Vector2f tamanho, sf::Vector2f velocidade, Identificador id, float duracaoMorte , float duracaoSofrerDano) :        // inicializa todos os parametros
     Entidade (posicao,tamanho,id) , _velocidade (velocidade) , andando (false) , andaEsquerda (false) , deltaTempo (0.0f),
     levandoDano (false) , atacando (false) , morrendo (false) , _vidaMaxima (100.0f) , _animacao(&_corpo) ,  _experiencia() , _arma (nullptr) , 
-    _vida (100.0f) , _tempoMorte (0.0f) , _tempoDano (0.0f) , _duracaoAnimacaoSofrerDano(duracaoSofrerDano) , _duracaoAnimacaoMorte(duracaoMorte) {}
+    _vida (100.0f) , _tempoMorte (0.0f) , _tempoDano (0.0f) , _duracaoAnimacaoSofrerDano(duracaoSofrerDano) , _duracaoAnimacaoMorte(duracaoMorte),
+     _tempoProtecaoAtaque(0.0f), _protegido(false) , _textoNivel (gGrafico->carregarFonte ("FonteNivel.ttf"), "", 15) {}
                                
 
 // destrutor
@@ -81,16 +83,33 @@ Arma *Personagem::get_arma()
     return _arma;
 }
 
+void Personagem::set_protegido(bool protegido)
+{
+    _protegido = protegido;
+}
+
+bool Personagem::get_protegido()
+{
+    return _protegido;
+}
+
+float Personagem::get_tempoProtecaoAtaque()
+{
+    return _tempoProtecaoAtaque;
+}
+
 // funcao que desenha na tela, vinda da classe gerenciador grafico
 void Personagem::desenhar()
 {
     gGrafico->desenhar(_corpo);
     gGrafico-> desenhar (_barraVida);
+    gGrafico-> desenhar (_textoNivel.get_texto());
     
 }
 
 void Personagem::andar(bool andaEsquerda)
 {
+    atacando = false;
     andando = true;
     if(andaEsquerda)
         this->andaEsquerda = true;
@@ -113,48 +132,50 @@ void Personagem::atualizarTomarDano()
     }
 }
 
-void Personagem::atacar(bool atacando)
+// funcao que atualiza o tempo sob protecao dos personagens ao sofrerem ataques
+void Personagem::atualizarTempoProtegido()
 {
-    this->atacando = atacando;   
+    if (_protegido) {
+        _tempoProtecaoAtaque += gGrafico->get_tempo();
+        if (_tempoProtecaoAtaque >= TEMPO_RECUPERACAO_DANO_ESQUELETO) {
+            _protegido = false;
+            _tempoProtecaoAtaque = 0.0f;
+        }
+    }
 }
 
-void Personagem::atualizarPosicao()
-{/*   
-    // movimentacao com base no movimento uniforme
-    deltaTempo = gGrafico->get_tempo ();                   // variacao do tempo
-    sf::Vector2f deltaDistancia (0.0f,0.0f);               // variacao da distancia
-
-    // movimentacao no eixo horizontal
-    if (andando && !morrendo){                                  // se estiver andando e nao estiver morrendo
-        deltaDistancia.x = _velocidade.x * deltaTempo;          // se move para a direita no eixo x
-        if (andaEsquerda)                                       // se estiver andando para esquerda
-            deltaDistancia.x *= -1;                             // apenas multiplica por -1 para inverter o sentido e andar para a esquerda
-    }
-    
-
-    // movimentacao na vertical, baseada no movimento uniformemente variado vertical
-    float velocidadeInicial = _velocidade.y;
-    _velocidade.y += (GRAVIDADE * deltaTempo);
-    deltaDistancia.y = (velocidadeInicial * deltaTempo) + (_velocidade.y * deltaTempo * deltaTempo) / 2.0f;
-
-    //atualiza as posicao
-    _corpo.move(sf::Vector2f(_posicao.x + deltaDistancia.x,_posicao.y + deltaDistancia.y));
-
-    /*
-    // movimentacao do pulo
-    _velocidade.y += GRAVIDADE;                     // sofre acao da gravidade
-    _corpo.move (0.0f,_velocidade.y);              // move o corpo
-
-    // verificacao se ja chegou ao solo novamente
-    if (_corpo.getPosition().y >= NIVEL_DA_PLATAFORMA){
-        _corpo.setPosition(_corpo.getPosition().x,NIVEL_DA_PLATAFORMA);
-        _velocidade.y = 0;
-    }*/
+void Personagem::atacar(bool atacando)
+{
+    /*this->atacando = atacando; */
+    this->atacando = atacando;   
+    if (atacando && _arma) {
+        _arma->atualizar();
+    }  
 }
 
 // funcao que aplica de fato o dano sofrido
 void Personagem::tomarDano(float dano)
 {
+    std::cout << "Debug - Vida antes: " << _vida << std::endl;
+    
+    if (!levandoDano && !_protegido) {
+        levandoDano = true;
+        _protegido = true;
+        andando = false;
+        atacando = false;
+        _vida -= dano;
+        
+        if (_vida <= 0.0f) {
+            morrendo = true;
+            _vida = 0.0f;
+        }
+        
+        _tempoDano = 0.0f;
+        _tempoProtecaoAtaque = 0.0f;
+        std::cout << "Debug - Vida depois: " << _vida << std::endl;
+    }
+
+    /*
     if (!levandoDano){                                                              // se nao estiver levando dano
         levandoDano = true;                                                         // atualiza a variavel para sinalizar que esta sendo atacado
         andando = false;                                                            // para de andar
@@ -165,5 +186,5 @@ void Personagem::tomarDano(float dano)
             _vida = 0.0f;                                                           // atualiza a vida para 0.0f
         }   
         _tempoDano = 0.0f;                                                          // reseta o tempo de dano
-    }
+    }*/
 }

@@ -32,6 +32,18 @@ void Jogador::atualizarAnimacao()
             _tempoMorte = 0.0f;
         }
     }
+    else if (levandoDano) {
+        if (!andaEsquerda)
+            _animacao.atualizar(DIREITA,"TOMARDANO");
+        else 
+            _animacao.atualizar(ESQUERDA,"TOMARDANO");
+        
+        _tempoDano += gGrafico->get_tempo();
+        if (_tempoDano >= DURACAO_JOGADOR_SOFRER_DANO) {
+            levandoDano = false;
+            _tempoDano = 0.0f;
+        }
+    }
     else if (!estaNoChao) {
         if (!andaEsquerda)
         _animacao.atualizar (DIREITA,"PULAR");
@@ -98,13 +110,21 @@ void Jogador::atualizarBarraVida()
 
 }
 
+// funcao que iniciliza tudo relacionado a experiencia / nivel do jogador
 void Jogador::inicializarNivel()
 {
-
+    _textoNivel.set_tamanhoFonte(20);
+    _textoNivel.set_informacao ("Level" + std::to_string(_experiencia.get_nivel()));
+    _textoNivel.set_tamanhoBorda (2);
+    _experiencia.set_forca (FORCA_JOGADOR);
+    _experiencia.set_defesa (DEFESA_JOGADOR);
 }
 
+// funcao que atualiza a o texto do nivel do jogador
 void Jogador::atualizarNivel()
 {
+    sf::Vector2f posicao = _tuboBarraVida.getPosition();
+    _textoNivel.set_posicao (sf::Vector2f (posicao.x + 5.0f, posicao.y - _textoNivel.get_tamanho().y - 12.0f));
 }
 
 
@@ -138,12 +158,26 @@ void Jogador::atualizarBarraXP()
     _barraXP.setPosition(sf::Vector2f((posicaoBarra.x + _tuboBarraVida.getSize().x - _barraXP.getSize().x - 7.0f), posicaoBarra.y + _tuboBarraXP.getSize().y / 2.0f - _barraXP.getSize().y / 2.0f));
 }
 
+// funcao que inicializa tudo relacionado a experiencia do jogador
 void Jogador::inicializarXP()
 {
+    std::string XPatual = std::to_string (_experiencia.get_experiencia());
+    XPatual = XPatual.substr (0,XPatual.find("v") + 4);
+   // _textoXP.set_informacao(XPatual);
+    //_textoXP.set_tamanhoBorda(2);
 }
 
+// funcao que atualiza a barra dexp do jogador
 void Jogador::atualizarXP()
 {
+    sf::Vector2f posicaoBarraXP (_tuboBarraXP.getPosition());
+    //_textoXP.set_posicao(sf::Vector2f(posicaoBarraXP.x + _tuboBarraXP.getSize().x - _textoXP.get_tamanho().x - 5.0f, posicaoBarraXP.y - _textoXP.get_tamanho().y - 12.0f));
+}
+
+// metodo que atualiza as chaves do jogo
+void Jogador::atualizarChaves()    // talvez nao precise
+{
+
 }
 
 // construtor 
@@ -151,6 +185,8 @@ Jogador::Jogador (sf::Vector2f posicao) :
     Personagem (posicao,sf::Vector2f (TAMANHO_JOGADOR_X,TAMANHO_JOGADOR_Y), sf::Vector2f(VELOCIDADE_JOGADOR_X,VELOCIDADE_JOGADOR_Y), Identificador::jogador , DURACAO_JOGADOR_MORTE, DURACAO_JOGADOR_SOFRER_DANO) ,
      estaNoChao (false) , _tempoAtaque(0.0f) 
     {
+        std::cout << "vida jogador inicio: " << _vida << std::endl;
+
         inicializarAnimacao();
         inicializarBarraVida();
         inicializarBarraXP ();
@@ -239,10 +275,37 @@ void Jogador::set_vida(float vida)
 void Jogador::adicionarXP(float experiencia)
 {
     _experiencia.adicionarExperiencia(experiencia);
-    //
+    _textoNivel.set_informacao ("Level" + std::to_string(_experiencia.get_nivel()));
     inicializarXP();
 }
 
+// funcao que retorna as chaves coletadas pelo jogador 
+/*std::vector<Chave *> Jogador::get_chaves()
+{
+    return _chaves;
+}
+
+// funcao que adiciona uma chave coletada no vector de chaves
+void Jogador::adicionarChave(Chave *chave)
+{
+    if (chave && !chave->get_coletou ()){
+    _chaves.push_back(chave);
+    chave->set_coletar (true);
+    }
+}
+
+// funcao que remove uma chave ja utilizada do vector de chaves
+void Jogador::removerChave(Chave *chave)
+{
+    if (!chave) return;
+
+    for (int i=0 ; i < _chaves.size(); i++){                    // percorre o vector
+        if (_chaves[i] == chave){                               // se achar a chave passada no parametro
+            _chaves.erase(_chaves.begin() + i);                 // remover ela do vector
+            return;                                             // encerra o programa
+        }
+    }
+}*/
 
 void Jogador::pular()
 {
@@ -263,6 +326,8 @@ void Jogador::podePular()
 
 void Jogador::colisao(Entidade *entidade, sf::Vector2f distancia)
 {
+    static bool jaColidiu = false;
+
     switch (entidade->get_id()) {
         case (Identificador::plataforma): {
             Plataforma* plataforma = dynamic_cast<Plataforma*>(entidade);
@@ -271,14 +336,17 @@ void Jogador::colisao(Entidade *entidade, sf::Vector2f distancia)
             }
             break;
         }
-        case (Identificador::espada_inimigo) : {
+        case (Identificador::espada_esqueleto) : {
             Arma* arma = dynamic_cast < Arma* > (entidade);
+            if (arma){
             tomarDano(arma->get_dano());
+            std::cout << "vida jogador: " << _vida << std::endl;
+            }
             break;
         }
         case (Identificador::esqueleto): {
             // Colisão com o inimigo
-            sf::Vector2f posicaoAtual = get_posicao();
+           /*sf::Vector2f posicaoAtual = get_posicao();
             sf::Vector2f posicaoInimigo = entidade->get_posicao();
 
             // Empurra o jogador para fora do inimigo
@@ -287,14 +355,37 @@ void Jogador::colisao(Entidade *entidade, sf::Vector2f distancia)
             } else {
                 posicaoAtual.y += (posicaoAtual.y < posicaoInimigo.y) ? -2.0f : 2.0f;
             }
-            set_posicao(posicaoAtual);
+            set_posicao(posicaoAtual);*/
+            /*sf::Vector2f posicaoInimigo = entidade->get_posicao();
+            Inimigo* inimigo = dynamic_cast < Inimigo* > (entidade);
+            if (_posicao.x < posicaoInimigo.x){
+                distancia.x *= -1;
+            }*/
+            
             break;
         }
 
         case (Identificador::porta): {
-            colisaoPorta = true;
+            if (!jaColidiu){
+            set_colidirPorta(true);
+            jaColidiu = true;
+            }
             break;
         }
+        /*case (Identificador::chave) : {
+        if (!jaColidiu){
+            Chave* chave = dynamic_cast < Chave* > (entidade);
+            if (chave && !chave->get_coletou()){
+                adicionarChave(chave);
+            } 
+            jaColidiu = true;
+        }
+            break;
+        }
+    }
+
+        if (entidade->get_id() == Identificador::porta || entidade->get_id() == Identificador::chave) {
+        jaColidiu = false;*/
     }
 }
 
@@ -308,14 +399,20 @@ void Jogador::atacar(bool atacar)
 
 // funcao que movimenta o jogador para as quatro direcoes
 void Jogador::atualizar () {
+
+        atualizarTempoProtegido();
+        
+        if (!levandoDano){                  // evita de atualizar a posicao quando sofre ataques
         atualizarPosicao();
+        }
+
         atualizarAnimacao();
         atualizarBarraVida();
         atualizarBarraXP();
         atualizarNivel();
         atualizarXP ();
 
-        colisaoPorta = false;
+        set_colidirPorta (false);
 
 
     /*if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {          // se a tecla pressionada for A ou seta para esquerda, move para esquerda

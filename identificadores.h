@@ -12,8 +12,9 @@ enum Identificador {
     chegadaCastelo,
     fundo_chegadaCastelo,
     arma,
-    espada_inimigo,
-    espada_jogador
+    espada_jogador,
+    espada_esqueleto,
+    chave
 
 
 };

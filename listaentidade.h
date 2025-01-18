@@ -27,6 +27,7 @@ public:
     //void adicionarJogador (const sf::Vector2f posicao, const sf::Vector2f tamanho, sf::Vector2f velocidade, Identificador id);
     //void adicionarInimigo (const sf::Vector2f posicao, const sf::Vector2f tamanho, sf::Vector2f velocidade, Jogador* jogador, Identificador id);
     //void adicionarPlataforma (sf::Vector2f posicao , sf::Vector2f tamanho, Identificador id, std::string tipo);
+    //void verificarEntidadesMortas ();
     void adicionarEntidade (Entidade* novaEntidade);
     void removerEntidade (Identificador id);
     void atualizar ();

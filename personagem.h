@@ -4,6 +4,7 @@
 #include "entidade.h"
 #include "animacao.h"
 #include "experiencia.h"
+#include "texto.h"
 
 
 #define GRAVIDADE  0.0004f               // positiva, pois o eixo y e invertido na biblioteca em uso
@@ -11,6 +12,10 @@
 
 #define TAMANHO_BARRA_VIDA_EIXO_X 60.0f
 #define TAMANHO_BARRA_VIDA_EIXO_Y 6.0f
+
+#define TEMPO_RECUPERACAO_DANO 0.5f
+#define TEMPO_RECUPERACAO_DANO_ESQUELETO 1.8f
+#define TEMPO_PROTECAO_JOGADOR 1.0f  // Tempo de protecao após tomar dano
 
 // Em personagem.h
 class Arma;  // Forward declaration
@@ -37,11 +42,17 @@ protected:
     float _duracaoAnimacaoSofrerDano;
 
 
+    float _tempoProtecaoAtaque;         // tempo que o inimigo fica protegido de outro ataque (evita que chame a funcao tomardano varias vezes em apenas um ataque )
+    bool _protegido;                    // sinaliza se ele esta protegido de levar um ataque 
+
+    Texto _textoNivel;
+
+
     // metodos privados para evitar de serem chamados de qualquer lugar do programa
     virtual void inicializarAnimacao () = 0;
     virtual void atualizarAnimacao () = 0;
     virtual void inicializarBarraVida() = 0;
-    virtual void atualizarBarraVida() = 0;
+    virtual void atualizarBarraVida();
     virtual void inicializarNivel () = 0;
     virtual void atualizarNivel ();
     
@@ -60,6 +71,9 @@ public:
     bool estaLevandoDano();
     void set_arma (Arma* arma);
     Arma* get_arma ();
+    void set_protegido (bool protegido);
+    bool get_protegido ();
+    float get_tempoProtecaoAtaque ();
     // metodos virtuais
     virtual void atualizar() = 0;
     virtual void desenhar();
@@ -71,6 +85,8 @@ public:
     void andar(bool andaEsquerda);
     void parar();
     void atualizarTomarDano ();
+
+    void atualizarTempoProtegido ();
 
 
 

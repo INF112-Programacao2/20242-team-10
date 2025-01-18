@@ -12,19 +12,21 @@
 
 #define TEMPO_MOVIMENTACAO_ALEATORIA 1.0f
 
-#define TEMPO_RECUPERACAO_DANO 0.5f
 
 class Inimigo: public Personagem {
+protected:
+    float _tempoAtaque;
 private:
     Jogador *_jogador;
     sf::Clock _relogio;
     unsigned int movimentoAleatorio;
 
-    float _tempoProtecaoAtaque;         // tempo que o inimigo fica protegido de outro ataque (evita que chame a funcao tomardano varias vezes em apenas um ataque )
-    bool _protegido;                    // sinaliza se ele esta protegido de levar um ataque 
+    bool _podeRemover;
+    bool podeAtacarJogador;
+
 
     float _duracaoAnimacaoAtaque;
-    float _tempoAtaque;
+    //float _tempoAtaque;
     float XP;
     //virtual void inicializarAnimacao () = 0;
     //void inicializarBarraVida ();
@@ -45,12 +47,14 @@ public:
     ~Inimigo();
     // gettters e setters
     float get_experiencia ();
+    bool podeRemover ();
     //void perseguirJogador (sf::Vector2f posicaoJogador, sf::Vector2f posicaoInimigo);
     virtual void tomarDano (float dano);
-    //void movimentarAleatoriamente ();
+    void atacar (bool atacar) override;
     virtual void atualizar();
     virtual void colisao (Entidade* entidade,sf::Vector2f distancia);
     virtual void atualizarPosicao () override;
+    virtual void desenhar () override;
 };
 
 

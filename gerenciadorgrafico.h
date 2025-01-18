@@ -13,6 +13,7 @@ private:
     Camera _camera;
     sf::Clock _relogio;
     static float _tempo;
+    std::map < std::string, sf::Texture> _texturas;
 
     static GerenciadorGrafico* _grafico;
     GerenciadorGrafico();                        // construtora privada para garantir que apenas um gerenciador sera criado, apenas 1 objeto
@@ -29,10 +30,12 @@ public:
     //void set_limiteObjeto (sf::IntRect objeto);
     // metodos da classe
     void limparJanela();
-    void desenhar(sf::RectangleShape desenho);
+    void desenhar(sf::RectangleShape desenho);                  // desenha corpos
+    void desenhar (sf::Text texto);                             // desenha textos
     void mostrarNaTela ();
     void fecharJanela();
-    sf::Texture carregarTextura(const char* textura);
+    sf::Texture& carregarTextura(const char* textura);
+    sf::Font carregarFonte (const char* fonte);
     const bool janelaEstaAberta();
     void resetarRelogio ();
     void atualizaCamera (sf::Vector2f posicaoJogador);

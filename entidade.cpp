@@ -5,7 +5,7 @@ GerenciadorGrafico* Entidade::gGrafico = GerenciadorGrafico::get_grafico();
 
 // construtor
 Entidade::Entidade(sf::Vector2f posicao, sf::Vector2f tamanho, Identificador id) :
-    _corpo(sf::RectangleShape (tamanho)) , _tamanho(tamanho) , _posicao(posicao) , _id(id)    // inicializa os parametros
+    _corpo(sf::RectangleShape (tamanho)) , _tamanho(tamanho) , _posicao(posicao) , _id(id), podeRemover (false)    // inicializa os parametros
 {
     _corpo.setPosition(posicao);                                                    // seta a posicao e a cor do corpo
     //_corpo.setFillColor (sf::Color::Red);
@@ -63,4 +63,9 @@ float Entidade::get_tempo()
 void Entidade::desenhar()
 {
     gGrafico->desenhar(_corpo);
+}
+
+void Entidade::remover()
+{
+    podeRemover = true;
 }

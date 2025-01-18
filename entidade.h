@@ -13,6 +13,8 @@ protected:
     sf::Vector2f _tamanho;
     Identificador _id;
 
+    bool podeRemover;
+
     static GerenciadorGrafico* gGrafico;
 
 public:
@@ -32,6 +34,8 @@ public:
     virtual void colisao (Entidade* entidade,sf::Vector2f distancia) = 0;
     virtual void atualizar() = 0;
     virtual void desenhar ();
+
+    void remover ();
 };
 
 

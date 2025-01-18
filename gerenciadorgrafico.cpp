@@ -49,6 +49,12 @@ void GerenciadorGrafico::desenhar (sf::RectangleShape desenho) {
     _janela->draw(desenho);
 }
 
+// funcao que desenha os textos na tela
+void GerenciadorGrafico::desenhar(sf::Text texto)
+{
+    _janela->draw (texto);
+}
+
 // funcao que mostra o desenho na tela
 void GerenciadorGrafico::mostrarNaTela() {
     _janela->display();
@@ -104,17 +110,30 @@ void GerenciadorGrafico::fecharJanela() {
 }
 
 // funcao que carrega as texturas do programa 
-sf::Texture GerenciadorGrafico::carregarTextura(const char* textura)
+ sf::Texture& GerenciadorGrafico::carregarTextura(const char* caminho)
 {
-    sf::Texture novaTextura;
-    try{
-    if (!novaTextura.loadFromFile(textura))
-    throw std::runtime_error ("Nao foi possivel encontrar o caminho da textura");
+  std::string path(caminho);
+    
+    // Se a textura já existe, retorna uma referência para ela
+    if (_texturas.find(path) != _texturas.end()) {
+        return _texturas[path];
     }
-    catch (std::exception &e) {
-        std::cout << "ERRO: " << e.what() << std::endl;
-    }
-    novaTextura.setSmooth(true);    // suavizar a textura
 
-return novaTextura;
+    // Carrega a nova textura
+    if (!_texturas[path].loadFromFile(caminho)) {
+        throw std::runtime_error("Erro ao carregar textura: " + std::string(caminho));
+    }
+    _texturas[path].setSmooth(true);
+    
+    return _texturas[path];
+}
+
+// funcao que carrega as fontes de textos do jogo
+sf::Font GerenciadorGrafico::carregarFonte(const char *caminhoFonte)
+{
+    sf::Font fonte;
+    if (!fonte.loadFromFile (caminhoFonte)){
+        throw std::invalid_argument ("Nao foi possivel carregar a fonte! ");
+    }
+    return fonte;
 }
