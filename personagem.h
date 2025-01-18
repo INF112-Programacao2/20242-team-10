@@ -74,6 +74,7 @@ public:
     void set_protegido (bool protegido);
     bool get_protegido ();
     float get_tempoProtecaoAtaque ();
+    void set_duracaoAnimacaoMorte (float duracao);
     // metodos virtuais
     virtual void atualizar() = 0;
     virtual void desenhar();

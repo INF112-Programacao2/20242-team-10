@@ -59,7 +59,7 @@ void Fase::criarPersonagem(sf::Vector2f posicao, Identificador id)
             if (!esqueleto) {
                 throw std::runtime_error("Falha ao alocar memória para o esqueleto");
             }
-
+            esqueleto->set_lista(_listaPersonagens);
             _listaPersonagens->adicionarEntidade(esqueleto);
             
             std::cout << "Esqueleto criado na posição: " << posicao.x << ", " << posicao.y << std::endl;

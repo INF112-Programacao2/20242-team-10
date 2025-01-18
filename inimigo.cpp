@@ -7,11 +7,11 @@
 // funcao que atualiza todos os metodos da classe
 void Inimigo::atualizar() 
 {
-        atualizarTempoAtaque();         // debug
+    if (!inativo){
+        atualizarTempoAtaque();         
 
         moverInimigo();
         atualizarPosicao();
-       // atualizarTempoAtaque();
         atualizarAnimacao();
         atualizarBarraVida ();
         atualizarNivel();
@@ -23,8 +23,9 @@ void Inimigo::atualizar()
             _protegido = false;
             _tempoProtecaoAtaque = 0.0f;
         }
+        }
     }
-}
+}   
 
 // funcao responsavel pela movimentacao do inimigo
 void Inimigo::moverInimigo () 
@@ -49,6 +50,8 @@ void Inimigo::moverInimigo ()
 // funcao que verifica as colisoes dos inimigos com outras entidades
 void Inimigo::colisao(Entidade *entidade, sf::Vector2f distancia)
 {
+    if (inativo) return;
+    
       switch (entidade->get_id()) {
         case (Identificador::plataforma): {
             Plataforma* plataforma = dynamic_cast<Plataforma*>(entidade);
@@ -123,21 +126,18 @@ void Inimigo::atualizarPosicao()
 // funcao que desenha as coisas do inimigo na tela
 void Inimigo::desenhar()
 { 
-        if (!morrendo || _tempoMorte <= _duracaoAnimacaoMorte) {
-        if (_corpo.getTexture() == nullptr) {
-            std::cout << "AVISO: Inimigo sem textura!" << std::endl;
-        }
-        if (_corpo.getFillColor().a == 0) {
-            std::cout << "AVISO: Inimigo transparente!" << std::endl;
+    // Desenha enquanto não puder remover
+    if (!inativo) {
+        gGrafico->desenhar(_corpo);
+        
+        // Só desenha a barra de vida se não estiver morrendo
+        if (!morrendo) {
+            gGrafico->desenhar(_barraVida);
         }
         
-        // Desenha apenas se for visível
-        if (_corpo.getFillColor().a > 0) {
-            gGrafico->desenhar(_corpo);
-            gGrafico->desenhar(_barraVida);
-            if (_arma) {
-                _arma->desenhar();
-            }
+        // Desenha a arma
+        if (_arma) {
+            _arma->desenhar();
         }
     }
     
@@ -185,16 +185,24 @@ float Inimigo::get_experiencia()
     return XP;
 }
 
-bool Inimigo::podeRemover()
+
+void Inimigo::set_lista(ListaEntidade *lista)
 {
-    return _podeRemover;
+    _lista = lista;
+}
+
+bool Inimigo::estaInativo() const
+{
+    return inativo;
 }
 
 // construtor
 Inimigo::Inimigo (sf::Vector2f posicao, sf::Vector2f tamanho, Jogador *jogador, Identificador id, float tempoMorte , float tempoAtaque , float experiencia) :
     Personagem (posicao,tamanho,sf::Vector2f(VELOCIDADE_DO_INIMIGO_EIXO_X, VELOCIDADE_DO_INIMIGO_EIXO_Y), id, tempoMorte , 0.6f),
-    _relogio() , _jogador(jogador) , _duracaoAnimacaoAtaque (tempoAtaque) , XP (experiencia), _tempoAtaque(0.0f) , podeAtacarJogador(true), _podeRemover (false)
+    _relogio() , _jogador(jogador) , _duracaoAnimacaoAtaque (tempoAtaque) , XP (experiencia), _tempoAtaque(0.0f) , inativo (false),
+     podeAtacarJogador(true), _lista(nullptr)
 {
+    set_duracaoAnimacaoMorte (DURACAO_ANIMACAO_MORTE);
     inicializarBarraVida ();
 }
 
@@ -283,13 +291,19 @@ void Inimigo::atualizarAnimacao()
     if (morrendo) {
         if (!andaEsquerda)
         _animacao.atualizar(DIREITA,"MORTE");
-        _tempoMorte += gGrafico->get_tempo();
-        if (_tempoMorte > _duracaoAnimacaoMorte){
-            _podeRemover = true;
-           // _tempoMorte = 0.0f;
+         else
+        _animacao.atualizar(ESQUERDA, "MORTE");
 
+        _tempoMorte += gGrafico->get_tempo();
+        if (_tempoMorte >= _duracaoAnimacaoMorte ){
+            inativo = true;
+            _corpo.setPosition(-1000.0,-1000.0);   // tlavez consiga tirar 
+           //std::cout << "removendo esqueleto" << std::endl;
+           }
+        return;
         }
-    }
+        
+    
     else if (levandoDano) {
         if (!andaEsquerda)
         _animacao.atualizar (DIREITA,"TOMARDANO");

@@ -13,7 +13,7 @@ protected:
     sf::Vector2f _tamanho;
     Identificador _id;
 
-    bool podeRemover;
+    bool _podeRemover;
 
     static GerenciadorGrafico* gGrafico;
 
@@ -30,6 +30,7 @@ public:
     sf::Vector2f get_tamanho();
     Identificador get_id () const;
     float get_tempo ();
+    bool podeRemover();
     // metodos virtuais
     virtual void colisao (Entidade* entidade,sf::Vector2f distancia) = 0;
     virtual void atualizar() = 0;

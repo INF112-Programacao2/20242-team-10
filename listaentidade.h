@@ -12,6 +12,7 @@ class Arma;
 class ListaEntidade {
 private:
     std::vector < Entidade* > _entidades;
+    //std::vector < Entidade* > _entidadesRemocao;
     Jogador* _jogador;
 
 public:
@@ -24,11 +25,10 @@ public:
     const std::vector < Entidade* >& get_entidades() const;
     int get_tamanhoLista();
     // metodos da classe
-    //void adicionarJogador (const sf::Vector2f posicao, const sf::Vector2f tamanho, sf::Vector2f velocidade, Identificador id);
-    //void adicionarInimigo (const sf::Vector2f posicao, const sf::Vector2f tamanho, sf::Vector2f velocidade, Jogador* jogador, Identificador id);
-    //void adicionarPlataforma (sf::Vector2f posicao , sf::Vector2f tamanho, Identificador id, std::string tipo);
-    //void verificarEntidadesMortas ();
+
     void adicionarEntidade (Entidade* novaEntidade);
+   // void marcarRemocao (Entidade* entidade);
+    void limparEntidadesMortas ();
     void removerEntidade (Identificador id);
     void atualizar ();
     void desenhar ();

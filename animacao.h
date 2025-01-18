@@ -17,6 +17,7 @@ public:
     // destrutor
     ~Animacao ();
     // getters e setters
+    bool animacaoCompleta ()const;
     std::string get_imagemAtual() const;
     void set_imagemAtual (std::string imagemAtual);
     unsigned int get_frameAtual();

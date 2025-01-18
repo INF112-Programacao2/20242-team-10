@@ -98,6 +98,11 @@ float Personagem::get_tempoProtecaoAtaque()
     return _tempoProtecaoAtaque;
 }
 
+void Personagem::set_duracaoAnimacaoMorte(float duracao)
+{
+    _duracaoAnimacaoMorte = duracao;
+}
+
 // funcao que desenha na tela, vinda da classe gerenciador grafico
 void Personagem::desenhar()
 {

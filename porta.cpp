@@ -47,7 +47,7 @@ void Porta::inicializarTexto(std::string texto)
 // construtor
 Porta::Porta(sf::Vector2f posicao, sf::Vector2f tamanho ,Identificador id) : 
     Obstaculo (posicao, tamanho,Identificador::porta), _animacao (&_corpo), _tempoAberturaPorta (0.0f) , 
-    _fechada (true), _abrindo (false) , _mostrarTexto (false) , _coletou (false) , fundoPorta (), _textoPorta (gGrafico->carregarFonte("FonteNivel.ttf"),"",30), _completou (false)
+    _fechada (true), _abrindo (false) , _mostrarTexto (false) , _textoPorta (gGrafico->carregarFonte("FonteNivel.ttf"),"",30), _completou (false)
 {
     inicializarAnimacao ();
     
@@ -75,69 +75,34 @@ bool Porta::completouTransicao() const
 // funcao que atualiza e verifica todas as variaveis quando houve uma colisao da porta com o jogador 
 void Porta::colisaoJogador(Jogador *jogador)
 {
-    /*if (!jogador) return;
+    if (!jogador) return;                                       // verifica se ha um jogador de fato
 
-    try {
-        _mostrarTexto = true;
-        if (!chave) {
-            inicializarTexto("Pressione 'E' para Entrar");
-            return;
-        }
-
-        std::vector<Chave*> chavesJogador = jogador->get_chaves();
-        bool temChave = false;
-
-        for (size_t i = 0; i < chavesJogador.size(); i++) {
-            if (chavesJogador[i] && chavesJogador[i] == this->chave) {
-                temChave = true;
-                break;
-            }
-        }
-
-        if (_fechada) {
-            if (temChave && jogador->estaAbrindoPorta()) {
-                _fechada = false;
-                _abrindo = true;
-                jogador->removerChave(chave);
-                _corpo.setFillColor(sf::Color::Transparent);
-                chave = nullptr;
-            } else if (temChave) {
-                inicializarTexto("Pressione E para abrir");
-            } else {
-                inicializarTexto("Precisa de uma chave!");
-            }
-        }
-    } catch (const std::exception& e) {
-        std::cout << "Erro na colisão com porta: " << e.what() << std::endl;
-    }*/
-        if (!jogador) return;
-
-    if (!_coletou) {
-        _mostrarTexto = true;
-        inicializarTexto("Necessario uma chave!");
-    }
-    else {
-        _mostrarTexto = true;
-        if (_fechada && jogador->estaAbrindoPorta()) {
+    _mostrarTexto = true;
+    
+    if (_fechada) {
+        inicializarTexto ("Pressione 'E' para Abrir");
+        if (jogador->estaAbrindoPorta ()){
             _fechada = false;
             _abrindo = true;
-            inicializarTexto("Pressione 'E' para Entrar");
-            _corpo.setFillColor(sf::Color(128, 128, 128));
-        }
-        else if (_abrindo) {
-            if (jogador->estaAbrindoPorta()) {
-                _tempoAberturaPorta += gGrafico->get_tempo();
-                if (_tempoAberturaPorta >= TEMPO_ENTRADA_NA_PORTA) {
-                    _completou = true;
-                    _mostrarTexto = false;
-                    _tempoAberturaPorta = 0.0f;
-                    jogador->set_abrirPorta(false);
-                }
-            }
-            _mostrarTexto = false;
+            _corpo.setFillColor (sf::Color(128, 128, 128));           // porta aberta
         }
     }
+    else if (_abrindo){
+        if (jogador->estaAbrindoPorta()){
+            _tempoAberturaPorta += gGrafico->get_tempo();
+            if (_tempoAberturaPorta >= TEMPO_ENTRADA_NA_PORTA) {
+                _completou = true;
+                _mostrarTexto = false;
+                _tempoAberturaPorta = 0.0f;
+                jogador->set_abrirPorta(false);
+            }
+        }
+        _mostrarTexto = false;
+    }
+      
 }
+    
+
 
 // metodo polimorfico que verifica as colisoes da porta
 void Porta::colisao(Entidade *entidade, sf::Vector2f distancia)
@@ -169,7 +134,9 @@ void Porta::desenhar()
 // funcao que atualiza tudo, metodos e variaveis da classe porta
 void Porta::atualizar()
 {
+    if (!_completou) {
     atualizarAnimacao();
     desenhar ();
     _mostrarTexto = false;
+    }
 }

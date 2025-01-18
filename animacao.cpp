@@ -7,7 +7,22 @@ Animacao::Animacao(sf::RectangleShape* corpo) :
 // destrutor
 Animacao::~Animacao()
 {
+    for (auto& par : mapaImagem) {
+        delete par.second;
+    }
+    mapaImagem.clear();
+}
 
+bool Animacao::animacaoCompleta() const
+{
+        // Verifica se existe uma animação atual
+    auto it = mapaImagem.find(_imagemAtual);
+    if (it != mapaImagem.end() && it->second != nullptr) {
+        Imagem* img = it->second;
+        // Verifica se o frame atual é o último frame
+        return img->get_frameAtual() >= (img->get_quantidadeFrames() - 1);
+    }
+    return false;
 }
 
 // funcao que retorna o imagem atual do estado (correndo, atacando, parado...)

@@ -28,46 +28,6 @@ int ListaEntidade::get_tamanhoLista()
     return _entidades.size();
 }
 
-// funcao que cria um jogador e adiciona ele no vector 
-/*void ListaEntidade::adicionarJogador(const sf::Vector2f posicao, const sf::Vector2f tamanho, sf::Vector2f velocidade, Identificador id)
-{
-    // verifica se o jogador foi criado
-    if (_jogador == nullptr)
-    _jogador = new Jogador (posicao,tamanho,velocidade,Identificador::jogador);                     // caso nao tenha sido, cria o jogador
-    // adiciona na lista
-    _entidades.push_back(_jogador);                                                                 
-}
-
-// funcao que cria um inimigo e adiciona ele no vector 
-void ListaEntidade::adicionarInimigo(const sf::Vector2f posicao, const sf::Vector2f tamanho, sf::Vector2f velocidade, Jogador *jogador, Identificador id)
-{
-    // verifica se o jogador esta criado
-    if (_jogador == nullptr)
-    throw std::runtime_error ("Nao foi possivel criar um inimigo, deve-se criar um jogador primeiro");
-    // cria o inimigo e o adiciona na lista
-    Inimigo* inimigo = new Inimigo (posicao, tamanho, velocidade, jogador, Identificador::inimigo);
-    _entidades.push_back (inimigo); 
-}
-
-// funcao que cria uma plataforma e adiciona ela no vector 
-void ListaEntidade::adicionarPlataforma(sf::Vector2f posicao, sf::Vector2f tamanho, Identificador id, std::string tipo)
-{
-    // cria a plataforma e adiciona na lista
-    Plataforma* plataforma = new Plataforma (posicao, tamanho, tipo, Identificador::plataforma);        
-    _entidades.push_back (plataforma);                                                                 
-}*/
-
-// funcao que verifica quais entidades foram mortas ao longo do programa
-/*void ListaEntidade::verificarEntidadesMortas()
-{
-    for (int i=0 ; i< _entidades.size() ; i ++) {
-        Inimigo* inimigo = dynamic_cast < Inimigo* > (_entidades[i]);
-        if (inimigo && inimigo->podeRemover ()) {
-            removerEntidade (i);
-        }
-    }
-\}*/
-
 void ListaEntidade::adicionarEntidade(Entidade *novaEntidade)
 {
     if (novaEntidade == nullptr) {
@@ -76,17 +36,66 @@ void ListaEntidade::adicionarEntidade(Entidade *novaEntidade)
     _entidades.push_back(novaEntidade);
 }
 
+// coloca no vector de remocao de entidades, a entidade a ser removida
+/*void ListaEntidade::marcarRemocao(Entidade *entidade)
+{
+    if (entidade) {
+        _entidadesRemocao.push_back(entidade);
+    }
+}*/
+
+// limpa as entidades mortas do jogo
+/*void ListaEntidade::limparEntidadesMortas()
+{
+       std::vector<Entidade*> novasEntidades;
+    
+    // Mantém apenas as entidades que não estão marcadas para remoção
+    for (auto& entidade : _entidades) {
+        if (entidade != nullptr) {
+            bool deveRemover = false;
+            
+            // Verifica se está na lista de remoção
+            for (auto& remover : _entidadesRemocao) {
+                if (entidade == remover) {
+                    deveRemover = true;
+                    break;
+                }
+            }
+            
+            if (!deveRemover) {
+                novasEntidades.push_back(entidade);
+            } else {
+                std::cout << "Removendo entidade..." << std::endl;
+                delete entidade;
+            }
+        }
+    }
+    
+    // Limpa a lista de remoção
+    _entidadesRemocao.clear();
+    
+    // Atualiza a lista principal
+    _entidades = std::move(novasEntidades);
+}*/
+
+void ListaEntidade::limparEntidadesMortas()
+{
+    for (int i=0 ; i < _entidades.size() ; i++){
+    if (_entidades[i]->podeRemover()){
+        removerEntidade(_entidades[i]->get_id());
+    }
+}
+}
+
 // funcao que remove qualquer entidade da lista de acordo com seu id
 void ListaEntidade::removerEntidade(Identificador id)
 {
-        try {
-        for (auto it = _entidades.begin(); it != _entidades.end();) {
-            if ((*it)->get_id() == id) {
-                delete *it;
-                it = _entidades.erase(it);
-            } else {
-                ++it;
-            }
+    try {
+        for (int i=0;i<_entidades.size();i++) {
+            if (id == _entidades[i]->get_id()) {
+                delete _entidades[i];
+                _entidades.erase(_entidades.begin() + i);
+            } 
         }
     } catch (const std::exception& e) {
         std::cerr << "Erro ao remover entidade: " << e.what() << std::endl;
@@ -122,28 +131,25 @@ void ListaEntidade::limparEntidades()
 
 void ListaEntidade::executar()
 {
-  {
-    try {
-        // Primeiro atualiza todas as entidades
-        for (auto it = _entidades.begin(); it != _entidades.end();) {
-            (*it)->atualizar();
-            
-            // Verifica se é um inimigo e se pode ser removido
-            Inimigo* inimigo = dynamic_cast<Inimigo*>(*it);
-            if (inimigo && inimigo->podeRemover()) {
-                delete *it;  // Libera a memória
-                it = _entidades.erase(it);  // Remove da lista e atualiza o iterador
-            } else {
-                ++it;  // Avança o iterador
+   try {
+        // Primeiro atualiza e desenha todas as entidades
+        for (auto& entidade : _entidades) {
+            if (entidade) {
+                entidade->atualizar();
             }
         }
 
-        // Depois desenha as entidades restantes
-        for (auto entidade : _entidades) {
-            entidade->desenhar();
+        // Desenha todas as entidades que não foram marcadas para remoção
+        for (auto& entidade : _entidades) {
+            if (entidade) {
+                entidade->desenhar();
+            }
         }
+
+        // Remove as entidades no final da execução
+        //limparEntidadesMortas();
+        
     } catch (const std::exception& e) {
         std::cerr << "Erro na execução da lista de entidades: " << e.what() << std::endl;
     }
-}
 }

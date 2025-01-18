@@ -14,18 +14,16 @@ class Jogador;
 
 class Porta : public Obstaculo {
 private:
-   // std::unique_ptr <sf::Font> _fonte;
-    //Chave* chave;
+
     bool _fechada;
     bool _abrindo;
     bool _completou;
     float _tempoAberturaPorta;
     Animacao _animacao;
-    sf::RectangleShape fundoPorta;
     Texto _textoPorta;
     sf::RectangleShape caixaTexto;
     bool _mostrarTexto;
-    bool _coletou;
+
     
     void inicializarAnimacao ();
     void atualizarAnimacao();
@@ -37,7 +35,6 @@ public:
     // destrutor
     ~Porta ();
     // getters e setters
-    //Chave* get_chave ();
     bool estaFechada ();
     bool completouTransicao () const;
     // metodos da classe

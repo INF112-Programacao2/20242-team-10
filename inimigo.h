@@ -2,6 +2,7 @@
 #define INIMIGO_H
 #include "personagem.h"
 #include "jogador.h"
+#include "listaentidade.h"
 #include <cmath>           // funcao do modulo fabs
 
 #define VELOCIDADE_DO_INIMIGO_EIXO_X 0.025f
@@ -12,16 +13,19 @@
 
 #define TEMPO_MOVIMENTACAO_ALEATORIA 1.0f
 
+#define DURACAO_ANIMACAO_MORTE 1.5f
+
 
 class Inimigo: public Personagem {
 protected:
+    bool inativo;
     float _tempoAtaque;
 private:
+    ListaEntidade* _lista;
     Jogador *_jogador;
     sf::Clock _relogio;
     unsigned int movimentoAleatorio;
 
-    bool _podeRemover;
     bool podeAtacarJogador;
 
 
@@ -47,7 +51,8 @@ public:
     ~Inimigo();
     // gettters e setters
     float get_experiencia ();
-    bool podeRemover ();
+    void set_lista (ListaEntidade* lista);
+    bool estaInativo () const;
     //void perseguirJogador (sf::Vector2f posicaoJogador, sf::Vector2f posicaoInimigo);
     virtual void tomarDano (float dano);
     void atacar (bool atacar) override;

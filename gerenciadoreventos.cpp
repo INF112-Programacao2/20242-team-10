@@ -48,7 +48,7 @@ void GerenciadorEvento::verificarTeclaSolta(sf::Keyboard::Key tecla)
     _jogador->parar();
     }
     else if (tecla == sf::Keyboard::E) {
-        _jogador->set_abrirPorta(false);
+        _jogador->set_abrirPorta(true);
     }
 }
 
