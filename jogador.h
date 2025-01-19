@@ -7,7 +7,7 @@
 #define DURACAO_ATAQUE_TOTAL 0.6f                         // sao 6 frames de ataque e o tempo de troca entre eles = 0.1f
 #define TAMANHO_JOGADOR_X 75.0f   
 #define TAMANHO_JOGADOR_Y 75.0f
-#define VELOCIDADE_JOGADOR_X 0.15f
+#define VELOCIDADE_JOGADOR_X 0.16f
 #define VELOCIDADE_JOGADOR_Y 0.0f
 
 #define DURACAO_JOGADOR_MORTE 1.0f
@@ -67,11 +67,8 @@ public:
     bool estaAbrindoPorta ();
     void set_vida (float vida);
     void adicionarXP (float experiencia);
-    //std::vector < Chave* > get_chaves ();
     // metodos da classe
     //void tomarDano(float dano);
-    //void adicionarChave (Chave* chave);
-   // void removerChave (Chave* chave);
     void pular ();
     void podePular ();
     virtual void colisao (Entidade* entidade,sf::Vector2f distancia);

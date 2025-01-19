@@ -6,15 +6,15 @@ enum Identificador {
     jogador,
     inimigo,
     plataforma,
-    fundo,
-    porta,
+    fundoPrincipal,
     esqueleto,
     chegadaCastelo,
-    fundo_chegadaCastelo,
+    faseCombateEsqueleto,
     arma,
     espada_jogador,
     espada_esqueleto,
-    chave
+    chave, 
+    parede
 
 
 };

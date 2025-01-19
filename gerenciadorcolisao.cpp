@@ -1,6 +1,5 @@
 #include "gerenciadorcolisao.h"
 #include "obstaculo.h"
-#include "porta.h"
 #include <cmath>
 
 // funcao que verifica as colisoes entre personagens
@@ -23,25 +22,22 @@ void GerenciadorColisao::verificaColisaoEntrePersonagens()
 // funcao que verifica as colisoes entre personagens e obstaculos
 void GerenciadorColisao::verificaColisaoPersonagemObstaculo()
 {
-        for (int i = 0; i < _listaPersonagens->get_tamanhoLista(); i++) {                 // percorre a lista de personagens
+    for (int i = 0; i < _listaPersonagens->get_tamanhoLista(); i++) {
         Entidade* personagem = _listaPersonagens->get_entidades()[i];
-        if (!personagem) continue;  // Skip se a entidade for nula
-            for (int j = 0; j < _listaObstaculos->get_tamanhoLista(); j++) {              // percorre a lista de obstaculos
-                Entidade* obstaculo = _listaObstaculos->get_entidades()[j];
-                 if (!obstaculo) continue;  // Skip se o obstáculo for nulo
-                sf::Vector2f distancia = calculaColisao(personagem, obstaculo);           // calcula  a colisao entre o personagem atual e todos os obstaculos
-                if (distancia.x < 0.0f && distancia.y < 0.0f) {                           // se a distancia entre eles for negativa em ambos os eixos, significa que ha colisao (sobreposicao)
-                 // Se for uma porta e já estiver aberta, não processa a colisão
-                    if (obstaculo->get_id() == Identificador::porta) {
-                        Porta* porta = dynamic_cast<Porta*>(obstaculo);
-                        if (porta && !porta->estaFechada()) {
-                            continue;
-                        }
-                    }
-                    obstaculo->colisao (personagem,distancia);                            // chama o metodo de colisao do obstaculo
-                    }
-                }
+        if (!personagem) continue;
+        for (int j = 0; j < _listaObstaculos->get_tamanhoLista(); j++) {
+            Entidade* obstaculo = _listaObstaculos->get_entidades()[j];
+            if (!obstaculo) continue;
+            
+            
+            if (obstaculo->get_id() == Identificador::parede) continue;
+
+            sf::Vector2f distancia = calculaColisao(personagem, obstaculo);
+            if (distancia.x < 0.0f && distancia.y < 0.0f) {
+                obstaculo->colisao(personagem, distancia);
             }
+        }
+    }
 }
  
 // construtor

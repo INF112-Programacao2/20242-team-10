@@ -8,7 +8,7 @@
 
 
 #define GRAVIDADE  0.0004f               // positiva, pois o eixo y e invertido na biblioteca em uso
-#define NIVEL_DA_PLATAFORMA 650.0f
+#define NIVEL_DA_PLATAFORMA 550.0f
 
 #define TAMANHO_BARRA_VIDA_EIXO_X 60.0f
 #define TAMANHO_BARRA_VIDA_EIXO_Y 6.0f

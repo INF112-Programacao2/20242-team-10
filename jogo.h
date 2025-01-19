@@ -9,9 +9,10 @@
 #include "fundo.h"
 #include "esqueleto.h"
 #include "fase.h"
-#include "chegadaCastelo.h"
 #include "arma.h"
 
+
+#define TEMPO_ESPERA_TRANSICAO 5.0f
 
 class Jogo {
 private:
@@ -20,11 +21,13 @@ private:
     //std::vector < Personagem* > _personagens;
     Fase* faseAtual;
 
+
+
 public:
     Jogo();
     ~Jogo();
     void executarJanela();
-    void mudarFase(Identificador idFase);
+    
 };
 
 #endif

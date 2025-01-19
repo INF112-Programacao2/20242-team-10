@@ -34,10 +34,8 @@ void GerenciadorEvento::verificarTeclaPressionada(sf::Keyboard::Key tecla)
     else if ( tecla == sf::Keyboard::Escape){
         _gGrafico->fecharJanela();
     }
-    else if ( tecla == sf::Keyboard::E) {
-        if (_jogador->estaColidindoPorta ()){
-            _jogador->set_abrirPorta(true);
-        }
+    else if ( tecla == sf::Keyboard::L && _mensagem && _mensagem->estaVisivel()) {
+        _mensagem->proximaMensagem();
     }
 
 }
@@ -48,7 +46,7 @@ void GerenciadorEvento::verificarTeclaSolta(sf::Keyboard::Key tecla)
     _jogador->parar();
     }
     else if (tecla == sf::Keyboard::E) {
-        _jogador->set_abrirPorta(true);
+        _jogador->set_abrirPorta(false);
     }
 }
 
@@ -63,6 +61,11 @@ void GerenciadorEvento::verificarClickMouse(sf::Event::MouseButtonEvent botaoMou
     if (botaoSolto.button == sf::Mouse::Left)
         _jogador->atacar(false);
 }*/
+
+void GerenciadorEvento::set_mensagem(MensagemBox *mensagem)
+{
+    _mensagem = mensagem;
+}
 
 void GerenciadorEvento::set_jogador(Jogador *jogador)
 {

@@ -5,7 +5,7 @@
 // gerencia todas as coisas relacionadas ao grafico, janela, texturas, sprites ...
 
 #define TAMANHO_TELA_X 1200.0f
-#define TAMANHO_TELA_Y 800.0f
+#define TAMANHO_TELA_Y 675.0f
 
 class GerenciadorGrafico {
 private:

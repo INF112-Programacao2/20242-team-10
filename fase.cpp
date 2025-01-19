@@ -3,7 +3,7 @@
 #include "esqueleto.h"
 #include "arma.h"
 #include "plataforma.h"
-#include "porta.h"
+
 
 // inicializacao dos membros estaticos
 Jogador* Fase::_jogador = nullptr;
@@ -19,22 +19,16 @@ void Fase::criarPlataforma(sf::Vector2f posicao, sf::Vector2f tamanho, std::stri
     _listaObstaculos->adicionarEntidade(plataforma);
 }
 
-void Fase::criarParede()
+void Fase::criarParede(sf::Vector2f posicao, sf::Vector2f tamanho, std::string tipo)
 {
-}
-
-// funcao que criar a porta junto a chave
-void Fase::criarPorta(sf::Vector2f posicao, sf::Vector2f tamanho)
-{
-    
-    
-    Porta* porta = new Porta (posicao, tamanho, Identificador::porta); 
-    if (porta == nullptr){
-        throw std::runtime_error ("Nao foi possivel criar a porta");
+    Plataforma* parede = new Plataforma (posicao, tamanho, tipo , Identificador::parede);
+    if (parede == nullptr) {
+         throw std::runtime_error ("Nao foi possivel criar a parede");
     }
-
-    _listaObstaculos->adicionarEntidade(porta);
+    parede->set_escala (sf::Vector2f(1.0f,1.0f));
+    _listaObstaculos->adicionarEntidade(parede);
 }
+
 
 void Fase::criarPersonagem(sf::Vector2f posicao, Identificador id)
 {
@@ -70,26 +64,51 @@ void Fase::criarPersonagem(sf::Vector2f posicao, Identificador id)
         }
 }
 
+void Fase::criarMapa()
+{
+    for (int i=0 ; i < TAMANHO_TELA_X * 3 / 75.0f ; i++){
+        criarPlataforma(sf::Vector2f(i*75.0f,NIVEL_DA_PLATAFORMA),sf::Vector2f(75.0f,125.0f),"CarpeteRocha",sf::Vector2f(1.0f,1.0f));
+    }
+
+    criarPlataforma(sf::Vector2f(320.0f,NIVEL_DA_PLATAFORMA - 200.0f),sf::Vector2f(75.0f,75.0f),"CarpeteRocha",sf::Vector2f(1.0f,1.0f));  // apenas para teste
+
+    criarPersonagem(sf::Vector2f(200.0f,NIVEL_DA_PLATAFORMA - TAMANHO_JOGADOR_Y), Identificador::jogador);
+    criarPersonagem(sf::Vector2f(500.0f,NIVEL_DA_PLATAFORMA - TAMANHO_ESQUELETO_Y),Identificador::esqueleto);
+}
+
 // construtor
-Fase::Fase(Identificador idFase, Identificador idFundo) :
-        _idFase (idFase) , _fundo(idFundo) , _listaPersonagens (new ListaEntidade()) , _listaObstaculos (new ListaEntidade()),
-        gColisao (nullptr) , gGrafico(gGrafico->get_grafico()), _mapa()
+Fase::Fase() :
+         _fundo(Identificador::fundoPrincipal) , _listaPersonagens (new ListaEntidade()) , _listaObstaculos (new ListaEntidade()),
+        gColisao (nullptr) , gGrafico(gGrafico->get_grafico()) , _mensagem (nullptr), gEvento (gEvento->get_gEvento())
 
 {
-    if (_listaObstaculos == nullptr|| _listaPersonagens == nullptr) {
-        throw std::runtime_error ("Nao foi possivel criar a lista de entidades para a fase");
-    }
+    sf::Font fonte;
+    fonte.loadFromFile("FonteNivel.ttf");
+    _mensagem = new MensagemBox (fonte, sf::Vector2f(50.0f, TAMANHO_TELA_Y - 150.0f),
+                                    sf::Vector2f (TAMANHO_TELA_X - 100.0f,100.0f));
+
+    gEvento->get_gEvento()->set_mensagem (_mensagem);
     
+
+                              
+
+
     gColisao = new GerenciadorColisao (_listaPersonagens,_listaObstaculos);
-    
-    if (gColisao == nullptr) {
-        throw std::runtime_error ("Nao foi possivel criar o gerenciador de colisao para a fase");
-    }
+    criarFundo();
+    criarMapa();
+
+    _mensagem->adicionarMensagem ("Olá, viajante!");  
+    _mensagem->adicionarMensagem("Bem-vindo ao jogo!");    
+
 }
 
 // destrutor
 Fase::~Fase()
 {
+    if (_mensagem){
+        delete _mensagem;
+        _mensagem = nullptr;
+    }
     if (_listaObstaculos) {
         delete _listaObstaculos;
         _listaObstaculos = nullptr;
@@ -111,10 +130,9 @@ void Fase::set_limiteCamera(sf::IntRect limiteCamera)
     gGrafico->set_limiteCamera(limiteCamera);
 }
 
-void Fase::set_mapa(std::vector<std::vector<char>> mapa)
-{
-    _mapa = std::move(mapa);
-}
+
+
+
 
 Jogador *Fase::get_jogador()
 {
@@ -128,15 +146,17 @@ Jogador *Fase::get_jogador()
     return nullptr;
 }
 
-/*sf::IntRect Fase::get_limiteCamera()
+void Fase::criarFundo()
 {
-    gGrafico->get_limiteCamera (); 
-}*/
+    _fundo.adicionarCamada("Fundo1.png",sf::Vector2f(TAMANHO_TELA_X,TAMANHO_TELA_Y),sf::Vector2f(0.0f,0.0f));
+    _fundo.adicionarCamada ("Fundo2.png",sf::Vector2f(TAMANHO_TELA_X,TAMANHO_TELA_Y),sf::Vector2f(0.0f,0.0f));
 
-/*void Fase::mudarFase(Identificador id = Identificador::comeco)
-{
+    _fundo.adicionarCamada ("fundoInterior.png" , sf::Vector2f (TAMANHO_TELA_X,TAMANHO_TELA_Y),sf::Vector2f(1200.0f,0.0f));
 
-}*/
+    _fundo.adicionarCamada("Fundo1.png",sf::Vector2f(TAMANHO_TELA_X,TAMANHO_TELA_Y),sf::Vector2f(2400.0f,0.0f));
+    _fundo.adicionarCamada ("Fundo2.png",sf::Vector2f(TAMANHO_TELA_X,TAMANHO_TELA_Y),sf::Vector2f(2400.0f,0.0f));
+
+}
 
 void Fase::executarFase()
 {
@@ -152,6 +172,10 @@ void Fase::executarFase()
 
     
         gColisao->executar();
+
+        if (_mensagem) {
+           _mensagem->atualizar ();
+        }
     }
     else 
     {
@@ -164,4 +188,8 @@ void Fase::desenhar()
     _fundo.executar();
     _listaPersonagens-> desenhar();
     _listaObstaculos->desenhar();
+
+    if (_mensagem) {
+        _mensagem->desenhar (*gGrafico->get_janela());
+    }
 }
