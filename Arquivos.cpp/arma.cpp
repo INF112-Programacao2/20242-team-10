@@ -4,6 +4,7 @@
 #include "inimigo.h"
 #include "jogador.h"
 #include <iostream>
+#include "morcego.h"
 
 // construtor da classe
 Arma::Arma(Identificador id) :
@@ -60,6 +61,19 @@ void Arma::colisao(Entidade *entidade, sf::Vector2f distancia)
                     Jogador* jogador = dynamic_cast<Jogador*>(_personagem);
                     if (jogador) {
                         jogador->adicionarXP(inimigo->get_experiencia());
+                    }
+                }
+            }
+        }
+        else if (entidade->get_id () == Identificador::morcego) {
+            Morcego* morcego = dynamic_cast<Morcego*>(entidade);
+            if (morcego && !morcego->estaLevandoDano() && !morcego->estaMorrendo()) {
+                morcego->tomarDano(_dano);
+                if (morcego->estaMorrendo()) {
+                    // Dá XP para o jogador se matou o morcego
+                    Jogador* jogador = dynamic_cast<Jogador*>(_personagem);
+                    if (jogador) {
+                        jogador->adicionarXP(morcego->get_experiencia());
                     }
                 }
             }

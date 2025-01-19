@@ -20,23 +20,26 @@ class Inimigo: public Personagem {
 protected:
     bool inativo;
     float _tempoAtaque;
-private:
-    ListaEntidade* _lista;
-    Jogador *_jogador;
     sf::Clock _relogio;
+    Jogador *_jogador;
+    float _duracaoAnimacaoAtaque;
+private:
+    //ListaEntidade* _lista;
+    //Jogador *_jogador;
+    //sf::Clock _relogio;
     unsigned int movimentoAleatorio;
 
     bool podeAtacarJogador;
 
 
-    float _duracaoAnimacaoAtaque;
+    //float _duracaoAnimacaoAtaque;
     //float _tempoAtaque;
     float XP;
     //virtual void inicializarAnimacao () = 0;
     //void inicializarBarraVida ();
-    void moverInimigo ();
+    virtual void moverInimigo ();
     //void inicializarVelocidade();
-    void atualizarMovimentacao (); 
+    virtual void atualizarMovimentacao (); 
     virtual void inicializarAnimacao() = 0;
     void atualizarBarraVida ();
     void inicializarBarraVida ();
@@ -51,7 +54,7 @@ public:
     ~Inimigo();
     // gettters e setters
     float get_experiencia ();
-    void set_lista (ListaEntidade* lista);
+    //void set_lista (ListaEntidade* lista);
     bool estaInativo () const;
     //void perseguirJogador (sf::Vector2f posicaoJogador, sf::Vector2f posicaoInimigo);
     virtual void tomarDano (float dano);

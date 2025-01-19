@@ -77,7 +77,7 @@ void ChegadaCastelo::criarMapa()
 
     criarPersonagem(sf::Vector2f(200.0f,NIVEL_DA_PLATAFORMA - TAMANHO_JOGADOR_Y), Identificador::jogador);
     std::cout << "Criando esqueleto..." << std::endl;
-    //criarPersonagem(sf::Vector2f(500.0f,NIVEL_DA_PLATAFORMA - TAMANHO_ESQUELETO_Y),Identificador::esqueleto);
+    //criar
     std::cout << "Esqueleto criado com sucesso" << std::endl;
 
     std::cout << "Total de entidades após criação: " << _listaPersonagens->get_tamanhoLista() << std::endl;

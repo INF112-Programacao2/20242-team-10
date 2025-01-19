@@ -2,6 +2,7 @@
 #include "jogador.h"
 #include "esqueleto.h"
 #include "arma.h"
+#include "morcego.h"
 #include "plataforma.h"
 
 
@@ -53,7 +54,7 @@ void Fase::criarPersonagem(sf::Vector2f posicao, Identificador id)
             if (!esqueleto) {
                 throw std::runtime_error("Falha ao alocar memória para o esqueleto");
             }
-            esqueleto->set_lista(_listaPersonagens);
+           // esqueleto->set_lista(_listaPersonagens);
             _listaPersonagens->adicionarEntidade(esqueleto);
             
             std::cout << "Esqueleto criado na posição: " << posicao.x << ", " << posicao.y << std::endl;
@@ -62,6 +63,16 @@ void Fase::criarPersonagem(sf::Vector2f posicao, Identificador id)
                 _listaPersonagens->adicionarEntidade(esqueleto->get_arma());
             }
         }
+    else if (id == Identificador::morcego) {
+            if (!_jogador) {
+                throw std::runtime_error("Não foi possível criar o morcego - jogador nulo");
+            }
+            Morcego* morcego = new Morcego (posicao,_jogador);
+            if (!morcego){
+                throw std::runtime_error("Falha ao alocar memória para o morcego");
+            }
+            _listaPersonagens->adicionarEntidade (morcego);
+    }
 }
 
 void Fase::criarMapa()
@@ -70,10 +81,11 @@ void Fase::criarMapa()
         criarPlataforma(sf::Vector2f(i*75.0f,NIVEL_DA_PLATAFORMA),sf::Vector2f(75.0f,125.0f),"CarpeteRocha",sf::Vector2f(1.0f,1.0f));
     }
 
-    criarPlataforma(sf::Vector2f(320.0f,NIVEL_DA_PLATAFORMA - 200.0f),sf::Vector2f(75.0f,75.0f),"CarpeteRocha",sf::Vector2f(1.0f,1.0f));  // apenas para teste
+   // criarPlataforma(sf::Vector2f(320.0f,NIVEL_DA_PLATAFORMA - 200.0f),sf::Vector2f(75.0f,75.0f),"CarpeteRocha",sf::Vector2f(1.0f,1.0f));  // apenas para teste
 
     criarPersonagem(sf::Vector2f(200.0f,NIVEL_DA_PLATAFORMA - TAMANHO_JOGADOR_Y), Identificador::jogador);
     criarPersonagem(sf::Vector2f(500.0f,NIVEL_DA_PLATAFORMA - TAMANHO_ESQUELETO_Y),Identificador::esqueleto);
+    criarPersonagem(sf::Vector2f(800.0f,300.0f),Identificador::morcego);
 }
 
 // construtor

@@ -8,6 +8,7 @@ enum Identificador {
     plataforma,
     fundoPrincipal,
     esqueleto,
+    morcego,
     chegadaCastelo,
     faseCombateEsqueleto,
     arma,

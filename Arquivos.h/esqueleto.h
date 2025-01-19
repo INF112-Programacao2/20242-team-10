@@ -23,7 +23,7 @@ public:
     // destrutor
     ~Esqueleto ();
 
-    virtual void desenhar () override;
+    //virtual void desenhar () override;
     
 };
 

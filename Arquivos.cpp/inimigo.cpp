@@ -104,11 +104,6 @@ void Inimigo::colisao(Entidade *entidade, sf::Vector2f distancia)
             }
             break;
         }
-        // debug
-        default: {
-            std::cout << "Esqueleto colidiu com outra entidade: " << (int)entidade->get_id() << std::endl;
-            break;
-        }
     }
 }
 
@@ -186,10 +181,10 @@ float Inimigo::get_experiencia()
 }
 
 
-void Inimigo::set_lista(ListaEntidade *lista)
+/*void Inimigo::set_lista(ListaEntidade *lista)
 {
     _lista = lista;
-}
+}*/
 
 bool Inimigo::estaInativo() const
 {
@@ -200,7 +195,7 @@ bool Inimigo::estaInativo() const
 Inimigo::Inimigo (sf::Vector2f posicao, sf::Vector2f tamanho, Jogador *jogador, Identificador id, float tempoMorte , float tempoAtaque , float experiencia) :
     Personagem (posicao,tamanho,sf::Vector2f(VELOCIDADE_DO_INIMIGO_EIXO_X, VELOCIDADE_DO_INIMIGO_EIXO_Y), id, tempoMorte , 0.6f),
     _relogio() , _jogador(jogador) , _duracaoAnimacaoAtaque (tempoAtaque) , XP (experiencia), _tempoAtaque(0.0f) , inativo (false),
-     podeAtacarJogador(true), _lista(nullptr)
+     podeAtacarJogador(true) 
 {
     set_duracaoAnimacaoMorte (DURACAO_ANIMACAO_MORTE);
     inicializarBarraVida ();
@@ -209,13 +204,17 @@ Inimigo::Inimigo (sf::Vector2f posicao, sf::Vector2f tamanho, Jogador *jogador, 
 // funcao que atualiza quando o inimigo tomar dano
 void Inimigo::tomarDano(float dano)
 {
+    if (inativo) return;
+
     if (!levandoDano && !_protegido) {
         _protegido = true;
         levandoDano = true;
         andando = false;
+        atacando = false;
         _vida -= dano; // apenas para simplificar, * (dano / _experiencia.get_defesa());
         if (_vida <= 0.0f) {
             morrendo = true;
+            atacando = false;
             _vida = 0.0f;
         }
         _tempoDano = 0.0f;

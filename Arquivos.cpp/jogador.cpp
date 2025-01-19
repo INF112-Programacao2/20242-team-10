@@ -2,6 +2,7 @@
 #include "inimigo.h"
 #include "plataforma.h"
 #include "arma.h"
+#include "morcego.h"
 #include <iostream>
 
 void Jogador::inicializarAnimacao()
@@ -309,7 +310,13 @@ void Jogador::colisao(Entidade *entidade, sf::Vector2f distancia)
         }
         case (Identificador::esqueleto): {
 
-            
+            break;
+        }
+        case (Identificador::morcego) : {
+            Morcego* morcego = dynamic_cast <Morcego*> (entidade);
+            if (morcego->estaAtacando())
+                tomarDano(morcego->get_forca());
+            std::cout << "vida jogador: " << _vida << std::endl;
             break;
         }
 
