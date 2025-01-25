@@ -33,12 +33,13 @@ void Morcego::atualizarMovimentacao()
 
 void Morcego::inicializarAnimacao()
 {
-        sf::Vector2f origem (0.0f,0.0f);
-       // _animacao.adicionarAnimacao("MorcegoVoando.png", "PARADO", 8, 0.12f, sf::Vector2f(1.0f, 1.0f), origem, true);
-        _animacao.adicionarAnimacao("MorcegoVoando.png", "CORRER", 8, 0.15f, sf::Vector2f(1.0f, 1.0f), origem, true);
-        _animacao.adicionarAnimacao("MorcegoAtaque.png", "ATACAR", 8, 0.10f, sf::Vector2f(1.0f, 1.0f), origem, true);
-        _animacao.adicionarAnimacao("MorcegoTomarDano.png", "TOMARDANO", 4, 0.15f, sf::Vector2f(1.0f, 1.0f), origem, true);
-        _animacao.adicionarAnimacao("MorcegoMorte.png", "MORTE", 4, 0.10f, sf::Vector2f(1.0f, 1.0f), origem, true);
+        sf::Vector2f escala (3.5f,3.5f);                                                                    // define a escala do sprite
+        sf::Vector2f origem (_tamanho.x * escala.x/10.0f , _tamanho.y * escala.y/8.0f);                     // define a origem do sprite seguindo a conta: 
+      
+        _animacao.adicionarAnimacao("MorcegoVoando.png", "CORRER", 8, 0.12f, escala, origem, true);
+        _animacao.adicionarAnimacao("MorcegoAtaque.png", "ATACAR", 8, 0.10f, escala, origem, true);
+        _animacao.adicionarAnimacao("MorcegoTomarDano.png", "TOMARDANO", 4, 0.12f, escala, origem, true);
+        _animacao.adicionarAnimacao("MorcegoMorte.png", "MORTE", 4, 0.15f, escala, origem, true);
 }
 
 void Morcego::atualizarAnimacao()
@@ -90,6 +91,8 @@ void Morcego::atualizarAnimacao()
 
 void Morcego::inicializarNivel()
 {
+     _textoNivel.set_informacao("Lv." + std::to_string (_experiencia.get_nivel()));
+    _textoNivel.set_tamanhoBorda(2);
 }
 
 Morcego::Morcego(sf::Vector2f posicao, Jogador* jogador) :
@@ -98,6 +101,7 @@ Morcego::Morcego(sf::Vector2f posicao, Jogador* jogador) :
 {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
+    inicializarNivel ();
     inicializarAnimacao ();
     atacando = false;
     _tempoAtaque = 0.0f;
@@ -129,7 +133,7 @@ void Morcego::colisao(Entidade *entidade, sf::Vector2f distancia)
             Arma* arma = dynamic_cast<Arma*>(entidade);
             if (arma && !levandoDano && !morrendo && _jogador->estaAtacando()) {
                 tomarDano(arma->get_dano());
-                std::cout << "Vida do morcego após dano: " << _vida << std::endl;
+                //std::cout << "Vida do morcego após dano: " << _vida << std::endl;
             }
             break;
         }

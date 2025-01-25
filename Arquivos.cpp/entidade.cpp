@@ -16,6 +16,7 @@ Entidade::~Entidade()
 {
 }
 
+
 // funcao que retorna o corpo
 sf::RectangleShape Entidade::get_corpo() const
 {
@@ -27,8 +28,8 @@ void Entidade::set_posicao(sf::Vector2f posicao)
 {
     _corpo.setPosition(posicao);
     this->_posicao = posicao;
+   
 }
-
 // funcao que retorna a posicao
 sf::Vector2f Entidade::get_posicao() const
 {

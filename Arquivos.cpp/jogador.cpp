@@ -4,6 +4,7 @@
 #include "arma.h"
 #include "morcego.h"
 #include <iostream>
+#include "projetil.h"
 
 void Jogador::inicializarAnimacao()
 {
@@ -109,7 +110,7 @@ void Jogador::atualizarBarraVida()
 void Jogador::inicializarNivel()
 {
     _textoNivel.set_tamanhoFonte(20);
-    _textoNivel.set_informacao ("Level" + std::to_string(_experiencia.get_nivel()));
+    _textoNivel.set_informacao ("Lv." + std::to_string(_experiencia.get_nivel()));
     _textoNivel.set_tamanhoBorda (2);
     _experiencia.set_forca (FORCA_JOGADOR);
     _experiencia.set_defesa (DEFESA_JOGADOR);
@@ -122,6 +123,16 @@ void Jogador::atualizarNivel()
     _textoNivel.set_posicao (sf::Vector2f (posicao.x + 5.0f, posicao.y - _textoNivel.get_tamanho().y - 12.0f));
 }
 
+void Jogador::resetarEstado()
+{
+    _velocidade = sf::Vector2f(VELOCIDADE_JOGADOR_X, VELOCIDADE_JOGADOR_Y);
+    _vida = 100.0f;
+    morrendo = false;
+    andando = false;
+    atacando = false;
+    levandoDano = false;
+    _congelaJogo = false;
+}
 
 void Jogador::inicializarBarraXP()
 {
@@ -157,8 +168,8 @@ void Jogador::atualizarBarraXP()
 void Jogador::inicializarXP()
 {
     std::string XPatual = std::to_string (_experiencia.get_experiencia());
-    XPatual = XPatual.substr (0,XPatual.find("v") + 4);
-   // _textoXP.set_informacao(XPatual);
+    XPatual = XPatual.substr (0,XPatual.find(".") + 2);
+     _textoXP.set_informacao(XPatual);
     //_textoXP.set_tamanhoBorda(2);
 }
 
@@ -166,20 +177,19 @@ void Jogador::inicializarXP()
 void Jogador::atualizarXP()
 {
     sf::Vector2f posicaoBarraXP (_tuboBarraXP.getPosition());
-    //_textoXP.set_posicao(sf::Vector2f(posicaoBarraXP.x + _tuboBarraXP.getSize().x - _textoXP.get_tamanho().x - 5.0f, posicaoBarraXP.y - _textoXP.get_tamanho().y - 12.0f));
+    _textoXP.set_posicao(sf::Vector2f(posicaoBarraXP.x + _tuboBarraXP.getSize().x - _textoXP.get_tamanho().x - 5.0f, posicaoBarraXP.y - _textoXP.get_tamanho().y - 12.0f));
+
+    inicializarXP();
 }
 
-// metodo que atualiza as chaves do jogo
-void Jogador::atualizarChaves()    // talvez nao precise
-{
 
-}
 
 // construtor 
 Jogador::Jogador (sf::Vector2f posicao) :
     Personagem (posicao,sf::Vector2f (TAMANHO_JOGADOR_X,TAMANHO_JOGADOR_Y), sf::Vector2f(VELOCIDADE_JOGADOR_X,VELOCIDADE_JOGADOR_Y), Identificador::jogador , DURACAO_JOGADOR_MORTE, DURACAO_JOGADOR_SOFRER_DANO) ,
-     estaNoChao (false) , _tempoAtaque(0.0f) , colisaoPorta (false) , abrirPorta (false)
+     estaNoChao (false) , _textoXP (gGrafico->carregarFonte("FonteNivel.ttf"),"",20) , _congelaJogo (false)
     {
+       //resetarEstado ();
         std::cout << "vida jogador inicio: " << _vida << std::endl;
 
         inicializarAnimacao();
@@ -196,7 +206,7 @@ Jogador::Jogador (sf::Vector2f posicao) :
         _arma->set_dano(_experiencia.get_forca());
         }
 
-       
+
     }
     
 // destrutor
@@ -229,28 +239,10 @@ bool Jogador::estaAndando()
     return andando;
 }
 
-// funcao que atualiza caso o jogador esteja colidindo com uma porta ou nao
-void Jogador::set_colidirPorta(bool colidindoPorta)
+// funcao que retorna se o jogador morreu e congelou a tela do jogo
+bool Jogador::estaCongeladoJogo()
 {
-    this->colisaoPorta = colidindoPorta;
-}
-
-// funcao que retorna se o jogador esta colidindo ou nao com uma porta 
-bool Jogador::estaColidindoPorta()
-{
-    return colisaoPorta;
-}
-
-// funcao que atualiza caso o jogador esteja abrindo uma porta ou nao
-void Jogador::set_abrirPorta(bool abrirPorta)
-{
-    this->abrirPorta = abrirPorta;
-}
-
-// funcao que retorna se o personagem esta ou nao abrindo uma porta
-bool Jogador::estaAbrindoPorta()
-{
-    return abrirPorta;
+    return _congelaJogo;
 }
 
 // funcao que atualiza a vida do jogador
@@ -266,7 +258,8 @@ void Jogador::set_vida(float vida)
 void Jogador::adicionarXP(float experiencia)
 {
     _experiencia.adicionarExperiencia(experiencia);
-    _textoNivel.set_informacao ("Level" + std::to_string(_experiencia.get_nivel()));
+    _textoNivel.set_informacao ("Lv." + std::to_string(_experiencia.get_nivel()));
+
     inicializarXP();
 }
 
@@ -298,28 +291,48 @@ void Jogador::colisao(Entidade *entidade, sf::Vector2f distancia)
             if (plataforma) {
                 plataforma->colisaoObstaculo(distancia, this);
             }
-            break;
+
         }
+        break;
+
         case (Identificador::espada_esqueleto) : {
             Arma* arma = dynamic_cast < Arma* > (entidade);
             if (arma){
             tomarDano(arma->get_dano());
-            std::cout << "vida jogador: " << _vida << std::endl;
+            //std::cout << "vida jogador: " << _vida << std::endl;
             }
-            break;
         }
-        case (Identificador::esqueleto): {
+        break;
 
-            break;
-        }
         case (Identificador::morcego) : {
             Morcego* morcego = dynamic_cast <Morcego*> (entidade);
             if (morcego->estaAtacando())
                 tomarDano(morcego->get_forca());
-            std::cout << "vida jogador: " << _vida << std::endl;
+            //std::cout << "vida jogador: " << _vida << std::endl;
             break;
         }
+        case (Identificador::faca_goblin) : {
+            Arma* arma = dynamic_cast < Arma* > (entidade);
+            if (arma){
+            tomarDano(arma->get_dano());
+            //std::cout << "vida jogador: " << _vida << std::endl;
+            }
+        }
+        break;
 
+        case (Identificador::projetil_alma) : {
+            Projetil* projetil = dynamic_cast <Projetil*> (entidade);
+            tomarDano (projetil->get_dano());
+            projetil->set_colidiu (true); 
+        }
+        break;
+
+        case (Identificador::cajado_chefao) : {
+            Arma* cajado = dynamic_cast <Arma*> (entidade);
+            tomarDano (cajado->get_dano());
+            //std::cout << "vida jogador: " << _vida << std::endl;
+        }
+        break;
     }
 }
 
@@ -334,17 +347,25 @@ void Jogador::atacar(bool atacar)
 // funcao que movimenta o jogador para as quatro direcoes
 void Jogador::atualizar () {
 
-        atualizarTempoProtegido();
-        
-        if (!levandoDano){                  // evita de atualizar a posicao quando sofre ataques
-        atualizarPosicao();
-        }
+        if (morrendo) {
+            atualizarAnimacao();
+            atualizarBarraVida();
 
-        atualizarAnimacao();
-        atualizarBarraVida();
-        atualizarBarraXP();
-        atualizarNivel();
-        atualizarXP ();
+            _congelaJogo = true;
+        }
+        else {
+            atualizarTempoProtegido();
+        
+            if (!levandoDano){                  // evita de atualizar a posicao quando sofre ataques
+            atualizarPosicao();
+            }
+
+            atualizarAnimacao();
+            atualizarBarraVida();
+            atualizarBarraXP();
+            atualizarNivel();
+            atualizarXP ();
+        }
 
 }
 
@@ -373,6 +394,12 @@ void Jogador::atualizarPosicao()
         _velocidade.y = 0.0f;
         estaNoChao = true;
     }
+
+    //std::cout << "posicao corpo: " << _corpo.getPosition ().x << " , "<< _corpo.getPosition ().y <<   std::endl;
+    if (_corpo.getPosition ().x >= 4700.0f &&
+        _corpo.getPosition().y >= 275.0f) {     // encontrou a coroa
+        _congelaJogo = true;
+    }       
 }
 
 void Jogador::desenhar()

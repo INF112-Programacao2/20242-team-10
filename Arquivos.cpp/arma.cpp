@@ -5,10 +5,14 @@
 #include "jogador.h"
 #include <iostream>
 #include "morcego.h"
+#include "alma.h"
+#include "goblin.h"
+#include "chefao.h"
+
 
 // construtor da classe
 Arma::Arma(Identificador id) :
-    Entidade (sf::Vector2f (-1000.0f, -1000.0f), sf::Vector2f (50.0f,90.0f), id) , _dano (0.0f), _personagem(nullptr)
+    Entidade (sf::Vector2f (-1000.0f, -1000.0f), sf::Vector2f (50.0f,90.0f), id) , _dano (0.0f), _personagem(nullptr), textoSomAtaques (gGrafico->carregarFonte ("FonteNivel.ttf"), "", 15)
 {
 
 }
@@ -45,43 +49,118 @@ void Arma::set_tamanho(sf::Vector2f tamanho)
 // funcao que verifica as colisoes da arma com outras entidades
 void Arma::colisao(Entidade *entidade, sf::Vector2f distancia)
 {
-        if (_personagem == nullptr) {
-        std::cout << "Debug - Arma sem personagem" << std::endl;
+    if (_personagem == nullptr) {
+        std::cout << "Debug - Arma sem personagem" << std::endl;      // exption
         return;
     }
 
     // Se a arma pertence ao jogador
     if (_personagem->get_id() == Identificador::jogador) {
-        if (entidade->get_id() == Identificador::esqueleto) {
-            Inimigo* inimigo = dynamic_cast<Inimigo*>(entidade);
-            if (inimigo && !inimigo->estaLevandoDano() && !inimigo->estaMorrendo()) {
-                inimigo->tomarDano(_dano);
-                if (inimigo->estaMorrendo()) {
-                    // Dá XP para o jogador se matou o inimigo
-                    Jogador* jogador = dynamic_cast<Jogador*>(_personagem);
-                    if (jogador) {
-                        jogador->adicionarXP(inimigo->get_experiencia());
-                    }
-                }
-            }
+        // Verifica se o jogador está atacando
+        if (!_personagem->estaAtacando()) {
+            return;
         }
-        else if (entidade->get_id () == Identificador::morcego) {
-            Morcego* morcego = dynamic_cast<Morcego*>(entidade);
-            if (morcego && !morcego->estaLevandoDano() && !morcego->estaMorrendo()) {
-                morcego->tomarDano(_dano);
-                if (morcego->estaMorrendo()) {
-                    // Dá XP para o jogador se matou o morcego
-                    Jogador* jogador = dynamic_cast<Jogador*>(_personagem);
-                    if (jogador) {
-                        jogador->adicionarXP(morcego->get_experiencia());
+
+        switch (entidade->get_id()) {
+            case Identificador::esqueleto: {
+                Inimigo* inimigo = dynamic_cast<Inimigo*>(entidade);
+                if (inimigo && !inimigo->estaLevandoDano() && !inimigo->estaMorrendo()) {
+                    inimigo->tomarDano(_dano);
+                    if (inimigo->estaMorrendo()) {
+                        Jogador* jogador = dynamic_cast<Jogador*>(_personagem);
+                        if (jogador) {
+                            jogador->adicionarXP(inimigo->get_experiencia());
+                        }
                     }
                 }
+                break;
+            }
+            case Identificador::alma: {
+                Alma* alma = dynamic_cast<Alma*>(entidade);
+                if (alma && !alma->estaLevandoDano() && !alma->estaMorrendo() && !alma->estaInvisivel()) {
+                    alma->tomarDano(_dano);
+                    //std::cout <<"Vida alma: " << alma->get_vida ();
+                    if (alma->estaMorrendo()) {
+                        Jogador* jogador = dynamic_cast<Jogador*>(_personagem);
+                        if (jogador) {
+                            jogador->adicionarXP(alma->get_experiencia());
+                        }
+                    }
+                }
+                break;
+            }
+            case Identificador::morcego: {
+                Morcego* morcego = dynamic_cast<Morcego*>(entidade);
+                if (morcego && !morcego->estaLevandoDano() && !morcego->estaMorrendo()) {
+                    morcego->tomarDano(_dano);
+                    if (morcego->estaMorrendo()) {
+                        Jogador* jogador = dynamic_cast<Jogador*>(_personagem);
+                        if (jogador) {
+                            jogador->adicionarXP(morcego->get_experiencia());
+                        }
+                    }
+                }
+                break;
+            }
+
+            case Identificador::goblin: {
+                Goblin* goblin = dynamic_cast<Goblin*>(entidade);
+                if (goblin && !goblin->estaLevandoDano() && !goblin->estaMorrendo()) {
+                    goblin->tomarDano(_dano);
+                    if (goblin->estaMorrendo()) {
+                        Jogador* jogador = dynamic_cast<Jogador*>(_personagem);
+                        if (jogador) {
+                            jogador->adicionarXP(goblin->get_experiencia());
+                        }
+                    }
+                }
+                break;
+            }
+
+                case Identificador::chefao: {
+                Chefao* chefao = dynamic_cast<Chefao*>(entidade);
+                if (chefao && !chefao->estaLevandoDano() && !chefao->estaMorrendo()) {
+                    chefao->tomarDano(_dano);
+                    if (chefao->estaMorrendo()) {
+                        Jogador* jogador = dynamic_cast<Jogador*>(_personagem);
+                        if (jogador) {
+                            jogador->adicionarXP(chefao->get_experiencia());
+                        }
+                    }
+                }
+                break;
             }
         }
     }
-    
-    // Se a arma pertence ao inimigo
+    // Se a arma pertence ao esqueleto
     else if (_personagem->get_id() == Identificador::esqueleto) {
+        if (entidade->get_id() == Identificador::jogador) {
+            Jogador* jogador = dynamic_cast<Jogador*>(entidade);
+            if (jogador && !jogador->estaLevandoDano() && !jogador->estaMorrendo() && _personagem->estaAtacando()) {
+                jogador->tomarDano(_dano);
+            }
+        }
+    }
+    // Se a arma pertence à alma
+    else if (_personagem->get_id() == Identificador::alma) {
+        if (entidade->get_id() == Identificador::jogador) {
+            Jogador* jogador = dynamic_cast<Jogador*>(entidade);
+            if (jogador && !jogador->estaLevandoDano() && !jogador->estaMorrendo()) {
+                jogador->tomarDano(_dano);
+            }
+        }
+    }
+    // Se a arma pertence ao goblin
+    else if (_personagem->get_id() == Identificador::goblin) {
+        if (entidade->get_id() == Identificador::jogador) {
+            Jogador* jogador = dynamic_cast<Jogador*>(entidade);
+            if (jogador && !jogador->estaLevandoDano() && !jogador->estaMorrendo() && _personagem->estaAtacando()) {
+                jogador->tomarDano(_dano);
+            }
+        }
+    }
+    // Se a arma pertence ao chefao
+    else if (_personagem->get_id() == Identificador::chefao) {
         if (entidade->get_id() == Identificador::jogador) {
             Jogador* jogador = dynamic_cast<Jogador*>(entidade);
             if (jogador && !jogador->estaLevandoDano() && !jogador->estaMorrendo() && _personagem->estaAtacando()) {

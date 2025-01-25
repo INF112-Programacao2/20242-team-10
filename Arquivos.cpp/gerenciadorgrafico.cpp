@@ -8,11 +8,12 @@ float GerenciadorGrafico::_tempo = 0.0f;
 
 // construtor
 GerenciadorGrafico::GerenciadorGrafico() : 
-    _janela(new sf::RenderWindow(sf::VideoMode(TAMANHO_TELA_X,TAMANHO_TELA_Y), "Torre")) , _relogio(), _camera (sf::Vector2f(TAMANHO_TELA_X,TAMANHO_TELA_Y))
+    _janela(new sf::RenderWindow(sf::VideoMode(TAMANHO_TELA_X,TAMANHO_TELA_Y), "Corredor")) , _relogio(), _camera (sf::Vector2f(TAMANHO_TELA_X,TAMANHO_TELA_Y))
     {
         if (_janela == nullptr)
             throw std::runtime_error ("Nao foi possivel criar a janela grafica");
 
+        _janela->setVerticalSyncEnabled (true);                     // ativa a sincronizacao vertical para melhorar a perfomance
         _janela->setFramerateLimit(0);                                                                  // limita o framerate a 60 fps
     }
 

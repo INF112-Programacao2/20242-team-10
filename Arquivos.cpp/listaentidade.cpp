@@ -121,9 +121,10 @@ void ListaEntidade::desenhar()
 // funcao que limpa a lista de entidades
 void ListaEntidade::limparEntidades()
 {
-      for (auto entidade : _entidades) {
-        if (entidade && entidade != _jogador) {  // Não deletar o jogador aqui
+    for (auto& entidade : _entidades) {
+        if (entidade) {
             delete entidade;
+            entidade = nullptr;
         }
     }
     _entidades.clear();

@@ -3,12 +3,14 @@
 
 #include "entidade.h"
 #include "personagem.h"
+#include "texto.h"
 
 #define TAMANHO_ARMA 25.0f
 
 class Arma : public Entidade {
-private:
+protected:
     float _dano;
+    Texto textoSomAtaques;
     Personagem* _personagem;
 
 public:

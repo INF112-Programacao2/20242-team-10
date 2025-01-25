@@ -3,8 +3,8 @@
 
 #include "inimigo.h"
 
-#define TAMANHO_MORCEGO_X 100.0f
-#define TAMANHO_MORCEGO_Y 100.0f
+#define TAMANHO_MORCEGO_X 50.0f
+#define TAMANHO_MORCEGO_Y 50.0f
 #define TEMPO_MOVIMENTACAO_MORCEGO 4.5f
 
 #define TEMPO_MORTE_MORCEGO 1.0f

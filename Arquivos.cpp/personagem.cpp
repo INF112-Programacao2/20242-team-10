@@ -23,7 +23,7 @@ Personagem::Personagem (sf::Vector2f posicao, sf::Vector2f tamanho, sf::Vector2f
     Entidade (posicao,tamanho,id) , _velocidade (velocidade) , andando (false) , andaEsquerda (false) , deltaTempo (0.0f),
     levandoDano (false) , atacando (false) , morrendo (false) , _vidaMaxima (100.0f) , _animacao(&_corpo) ,  _experiencia() , _arma (nullptr) , 
     _vida (100.0f) , _tempoMorte (0.0f) , _tempoDano (0.0f) , _duracaoAnimacaoSofrerDano(duracaoSofrerDano) , _duracaoAnimacaoMorte(duracaoMorte),
-     _tempoProtecaoAtaque(0.0f), _protegido(false) , _textoNivel (gGrafico->carregarFonte ("FonteNivel.ttf"), "", 15) {}
+     _tempoProtecaoAtaque(0.0f), _protegido(false) , _textoNivel (gGrafico->carregarFonte ("FonteNivel.ttf"), "", 15) , _tempoAtaque (0.0f) {}
                                
 
 // destrutor
@@ -103,6 +103,11 @@ void Personagem::set_duracaoAnimacaoMorte(float duracao)
     _duracaoAnimacaoMorte = duracao;
 }
 
+float Personagem::get_vida()
+{
+    return _vida;
+}
+
 // funcao que desenha na tela, vinda da classe gerenciador grafico
 void Personagem::desenhar()
 {
@@ -142,7 +147,7 @@ void Personagem::atualizarTempoProtegido()
 {
     if (_protegido) {
         _tempoProtecaoAtaque += gGrafico->get_tempo();
-        if (_tempoProtecaoAtaque >= TEMPO_RECUPERACAO_DANO_ESQUELETO) {
+        if (_tempoProtecaoAtaque >= TEMPO_RECUPERACAO_DANO) {
             _protegido = false;
             _tempoProtecaoAtaque = 0.0f;
         }
@@ -161,7 +166,7 @@ void Personagem::atacar(bool atacando)
 // funcao que aplica de fato o dano sofrido
 void Personagem::tomarDano(float dano)
 {
-    std::cout << "Debug - Vida antes: " << _vida << std::endl;
+    //std::cout << "Debug - Vida antes: " << _vida << std::endl;
     
     if (!levandoDano && !_protegido) {
         levandoDano = true;
@@ -177,7 +182,7 @@ void Personagem::tomarDano(float dano)
         
         _tempoDano = 0.0f;
         _tempoProtecaoAtaque = 0.0f;
-        std::cout << "Debug - Vida depois: " << _vida << std::endl;
+       // std::cout << "Debug - Vida depois: " << _vida << std::endl;
     }
 
     /*

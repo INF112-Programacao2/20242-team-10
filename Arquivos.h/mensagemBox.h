@@ -13,8 +13,10 @@ private:
     sf::RectangleShape _caixa;
     Texto* _texto;
     std::queue <std::string> _mensagens;
-    sf::Vector2f _posicao;
-    sf::Vector2f _tamanho;
+    sf::Clock _relogio;
+    //sf::Vector2f _posicao;
+    //sf::Vector2f _tamanho;
+    float _tempoExibicao;
     bool visivel;
 
 
@@ -24,11 +26,12 @@ public:
     // destrutor
     ~MensagemBox();
     // getters e setters
-    void set_visivel (bool visivel);
+   // void set_visivel (bool visivel);
     bool temMensagem ();
     bool estaVisivel ();
 
     // metodos da classe
+    void limparMensagens ();
     void adicionarMensagem (const std::string& mensagem);
     void proximaMensagem ();
     void atualizar();

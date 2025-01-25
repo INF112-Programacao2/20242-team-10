@@ -4,6 +4,8 @@
 #include "obstaculo.h"
 #include "jogador.h"
 
+#define TEXTURA_BANCO "Banco.png"
+
 #define TEXTURA_CHAO_DE_MADEIRA "Chao de madeira.png"
 #define TEXTURA_CHAO_CARPETE_AZUL "Carpete.png"
 #define TEXTURA_CHAO_CARPETE_AZUL_ROCHA "CarpeteRocha.png"

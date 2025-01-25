@@ -23,6 +23,7 @@ public:
     //destrutor
     virtual ~Entidade();
     // getters e setters
+
     sf::RectangleShape get_corpo() const;
     void set_posicao(sf::Vector2f posicao);
     sf::Vector2f get_posicao () const;

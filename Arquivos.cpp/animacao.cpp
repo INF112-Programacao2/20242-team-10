@@ -64,6 +64,29 @@ void Animacao::set_tempoTotal(float tempoTotal)
 // funcao que atualiza a animacao do estado atual ( atualiza as animacoes quando o jogador esta atacando o inimigo por exemplo)
 void Animacao::atualizar(Direcao direcao, std::string imagemAtual)
 {   
+
+        if (_imagemAtual != imagemAtual) {
+        if (!_imagemAtual.empty()) {
+            auto it = mapaImagem.find(_imagemAtual);
+            if (it != mapaImagem.end()) {
+                it->second->resetar();
+            }
+        }
+        _imagemAtual = imagemAtual;
+    }
+    
+    float tempo = _relogio.restart().asSeconds();
+    
+    auto it = mapaImagem.find(_imagemAtual);
+    if (it != mapaImagem.end()) {
+        Imagem* img = it->second;
+        img->atualizar(direcao, tempo);
+        _corpo->setTextureRect(img->get_tamanho());
+        _corpo->setTexture(img->get_textura());
+        _corpo->setOrigin(img->get_origem());
+        _corpo->setScale(img->get_escala());
+    }
+    /*
     // verifica se o estado atual e igual ao esta do parametro
     if ( _imagemAtual != imagemAtual) {                 // se o estado for diferente, mas existe um estado ocorrendo
         if (_imagemAtual != ""){                        
@@ -86,7 +109,7 @@ void Animacao::atualizar(Direcao direcao, std::string imagemAtual)
     _corpo->setScale(escala.x,escala.y);
 
 
-
+*/
 }
 
 // funcao que adiciona uma nova animacao no jogo

@@ -21,7 +21,8 @@ private:
     //std::vector < Personagem* > _personagens;
     Fase* faseAtual;
 
-
+    Menu* menu;
+    bool jogoIniciado;
 
 public:
     Jogo();

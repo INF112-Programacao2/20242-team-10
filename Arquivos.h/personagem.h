@@ -7,14 +7,14 @@
 #include "texto.h"
 
 
-#define GRAVIDADE  0.0004f               // positiva, pois o eixo y e invertido na biblioteca em uso
+#define GRAVIDADE  0.002f               // positiva, pois o eixo y e invertido na biblioteca em uso
 #define NIVEL_DA_PLATAFORMA 550.0f
 
 #define TAMANHO_BARRA_VIDA_EIXO_X 60.0f
 #define TAMANHO_BARRA_VIDA_EIXO_Y 6.0f
 
-#define TEMPO_RECUPERACAO_DANO 0.5f
-#define TEMPO_RECUPERACAO_DANO_ESQUELETO 1.8f
+#define TEMPO_RECUPERACAO_DANO 1.5f
+//#define TEMPO_RECUPERACAO_DANO_ESQUELETO 1.8f
 #define TEMPO_PROTECAO_JOGADOR 1.0f  // Tempo de protecao após tomar dano
 
 // Em personagem.h
@@ -32,7 +32,8 @@ protected:
     bool levandoDano;
     bool atacando;
     bool morrendo;
-    //bool estaAtacando;
+    
+    float _tempoAtaque;
     float _vidaMaxima;
     float _vida;
     float deltaTempo;
@@ -75,6 +76,7 @@ public:
     bool get_protegido ();
     float get_tempoProtecaoAtaque ();
     void set_duracaoAnimacaoMorte (float duracao);
+    float get_vida ();
     // metodos virtuais
     virtual void atualizar() = 0;
     virtual void desenhar();

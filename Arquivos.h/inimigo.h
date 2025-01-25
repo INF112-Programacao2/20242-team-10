@@ -19,29 +19,24 @@
 class Inimigo: public Personagem {
 protected:
     bool inativo;
-    float _tempoAtaque;
     sf::Clock _relogio;
     Jogador *_jogador;
     float _duracaoAnimacaoAtaque;
+    virtual void atualizarMovimentacao ();
+    float XP;
+    void atualizarBarraVida ();
 private:
-    //ListaEntidade* _lista;
-    //Jogador *_jogador;
-    //sf::Clock _relogio;
-    unsigned int movimentoAleatorio;
-
+   
     bool podeAtacarJogador;
 
 
     //float _duracaoAnimacaoAtaque;
     //float _tempoAtaque;
-    float XP;
-    //virtual void inicializarAnimacao () = 0;
-    //void inicializarBarraVida ();
+    //float XP;
     virtual void moverInimigo ();
-    //void inicializarVelocidade();
-    virtual void atualizarMovimentacao (); 
+    //virtual void atualizarMovimentacao (); 
     virtual void inicializarAnimacao() = 0;
-    void atualizarBarraVida ();
+   // void atualizarBarraVida ();
     void inicializarBarraVida ();
     virtual void atualizarTempoAtaque ();
     virtual void atualizarAnimacao ();

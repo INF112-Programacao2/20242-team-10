@@ -73,37 +73,14 @@ void Inimigo::colisao(Entidade *entidade, sf::Vector2f distancia)
             break; 
         }
             
-        
-
-        /*case (Identificador::jogador): {
-            std::cout << "esqueleto colidiu com jogador" << std::endl;
-            // Colisão com o jogador
-            /*sf::Vector2f posicaoAtual = get_posicao();
-            sf::Vector2f posicaoJogador = entidade->get_posicao();
-
-            // Empurra o inimigo para fora do jogador
-            if (fabs(distancia.x) < fabs(distancia.y)) {
-                posicaoAtual.x += (posicaoAtual.x < posicaoJogador.x) ? -2.0f : 2.0f;
-            } else {
-                posicaoAtual.y += (posicaoAtual.y < posicaoJogador.y) ? -2.0f : 2.0f;
-            }
-            set_posicao(posicaoAtual);
-
-            // Inicia ataque quando colide com jogador
-            if (!atacando && !morrendo){
-                std::cout << "atacando" << std::endl;
-                atacar(true);    
-            }
-            break;
-        }*/
-        case (Identificador::espada_jogador) : {
+        /*case (Identificador::espada_jogador) : {
             Arma* arma = dynamic_cast < Arma* > (entidade);
             if (arma && _jogador->estaAtacando()){
             tomarDano (arma->get_dano());
             std::cout << _vida << std::endl;
             }
             break;
-        }
+        }*/
     }
 }
 
@@ -128,6 +105,7 @@ void Inimigo::desenhar()
         // Só desenha a barra de vida se não estiver morrendo
         if (!morrendo) {
             gGrafico->desenhar(_barraVida);
+            gGrafico->desenhar(_textoNivel.get_texto());
         }
         
         // Desenha a arma
@@ -194,7 +172,7 @@ bool Inimigo::estaInativo() const
 // construtor
 Inimigo::Inimigo (sf::Vector2f posicao, sf::Vector2f tamanho, Jogador *jogador, Identificador id, float tempoMorte , float tempoAtaque , float experiencia) :
     Personagem (posicao,tamanho,sf::Vector2f(VELOCIDADE_DO_INIMIGO_EIXO_X, VELOCIDADE_DO_INIMIGO_EIXO_Y), id, tempoMorte , 0.6f),
-    _relogio() , _jogador(jogador) , _duracaoAnimacaoAtaque (tempoAtaque) , XP (experiencia), _tempoAtaque(0.0f) , inativo (false),
+    _relogio() , _jogador(jogador) , _duracaoAnimacaoAtaque (tempoAtaque) , XP (experiencia) , inativo (false),
      podeAtacarJogador(true) 
 {
     set_duracaoAnimacaoMorte (DURACAO_ANIMACAO_MORTE);
@@ -294,13 +272,13 @@ void Inimigo::atualizarAnimacao()
         _animacao.atualizar(ESQUERDA, "MORTE");
 
         _tempoMorte += gGrafico->get_tempo();
-        if (_tempoMorte >= _duracaoAnimacaoMorte ){
-            inativo = true;
-            _corpo.setPosition(-1000.0,-1000.0);   // tlavez consiga tirar 
-           //std::cout << "removendo esqueleto" << std::endl;
-           }
-        return;
+        if (_tempoMorte >= _duracaoAnimacaoMorte && !inativo ){
+            _jogador->adicionarXP(XP);
+            inativo = true;          
+            _corpo.setFillColor (sf::Color::Transparent);                   // desaparece com o corpo
         }
+        return;
+    }
         
     
     else if (levandoDano) {
@@ -309,7 +287,7 @@ void Inimigo::atualizarAnimacao()
         else 
         _animacao.atualizar (ESQUERDA,"TOMARDANO"); 
 
-        _tempoDano += TEMPO_RECUPERACAO_DANO;
+        _tempoDano += gGrafico->get_tempo();
         if (_tempoDano >= TEMPO_RECUPERACAO_DANO) {
             levandoDano = false;
             _tempoDano = 0.0f;

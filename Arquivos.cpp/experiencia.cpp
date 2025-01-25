@@ -4,7 +4,7 @@
 
 // construtor default
 Experiencia::Experiencia() :
-    _nivel (1) , _experiencia (20.0f) , _forca (20.0f), _defesa (20.0f)  {}
+    _nivel (1) , _experiencia (20.0f) , _forca (10.0f), _defesa (20.0f)  {}
 
 
 // construtor da classe
@@ -24,8 +24,8 @@ void Experiencia::set_nivel(unsigned int nivel)
     }
 
     this->_nivel = nivel;
-    this->_forca = _forca * pow(1.5f, nivel - 1);
-    this->_defesa = _defesa * pow(1.3f, nivel - 1);
+    this->_forca = _forca + (_nivel*5.0f);
+    this->_defesa = _defesa + (_nivel*10.0f);
 
 }
 
@@ -38,6 +38,8 @@ unsigned int Experiencia::get_nivel()
 // funcao que adiciona experiencia e atualiza caso o personagem tenha experiencia necessaria para atualizar de nivel
 void Experiencia::adicionarExperiencia(float experiencia)
 {
+    if (_experiencia < 0) return;
+    
     this->_experiencia += experiencia;                      // adiciona a experiencia
 
     if (_experiencia >= PROXIMO_NIVEL){                     // se tiver xp necessaria para atualizar o nivel
@@ -69,14 +71,14 @@ float Experiencia::get_defesa()
 void Experiencia::set_forca(float forca)
 {
     _forca = forca;                                                          
-    _forca *= pow (1.5f, _nivel - 1);                                    
+    _forca = _forca + (_nivel*5.0f);                                    
 }
 
 // funcao que atualiza a defesa do personagem, ja alterando o atributo
 void Experiencia::set_defesa(float defesa)
 {
     _defesa = defesa;
-    _defesa *= pow (1.5f, _nivel - 1);
+    _defesa = _defesa + (_nivel*10.0f);
 }
 
 

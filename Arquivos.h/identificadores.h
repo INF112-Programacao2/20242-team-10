@@ -9,15 +9,19 @@ enum Identificador {
     fundoPrincipal,
     esqueleto,
     morcego,
-    chegadaCastelo,
-    faseCombateEsqueleto,
+    goblin,
+    alma,
+    chefao,
+    cajado_chefao,
     arma,
+    projetil_alma,
     espada_jogador,
+    faca_goblin,
     espada_esqueleto,
-    chave, 
+    chave,
+    espinho, 
+    escada,
     parede
-
-
 };
 
 

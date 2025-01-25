@@ -14,7 +14,7 @@ void Plataforma::inicializarAnimacao()
         sf::Texture& textura = gGrafico->carregarTextura(TEXTURA_CHAO_CARPETE_AZUL_ROCHA);
         _corpo.setTexture (&textura);
     }
-    else if ( _tipo == "Teto"){
+    /*else if ( _tipo == "Teto"){
         sf::Texture& textura = gGrafico->carregarTextura(TEXTURA_TETO);
         _corpo.setTexture (&textura);
     }
@@ -48,6 +48,10 @@ void Plataforma::inicializarAnimacao()
     }
     else if ( _tipo == "Contorno7"){
         sf::Texture& textura = gGrafico->carregarTextura(TEXTURA_CONTORNO_7);
+        _corpo.setTexture (&textura);
+    }*/
+    else if ( _tipo == "Banco"){
+        sf::Texture& textura = gGrafico->carregarTextura(TEXTURA_BANCO);
         _corpo.setTexture (&textura);
     }
 

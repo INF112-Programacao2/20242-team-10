@@ -5,7 +5,6 @@
 void Esqueleto::inicializarAnimacao()
 {      
 
-    //sf::Vector2f origem(_tamanho.x / 12.0f, _tamanho.y / 10.0f);
     sf::Vector2f origem(0.0f , 0.0f);
     try {
         // Adiciona as animações
@@ -23,22 +22,18 @@ void Esqueleto::inicializarAnimacao()
 
 void Esqueleto::inicializarNivel()
 {
-    
+    _textoNivel.set_informacao("Lv." + std::to_string (_experiencia.get_nivel()));
+    _textoNivel.set_tamanhoBorda(2);
 }
 
 Esqueleto::Esqueleto(sf::Vector2f posicao, Jogador *jogador) : 
     Inimigo(posicao, sf::Vector2f(TAMANHO_ESQUELETO_X, TAMANHO_ESQUELETO_Y),
     jogador, Identificador::esqueleto, TEMPO_MORTE_ESQUELETO, 2.0f, XP_ESQUELETO) 
 {
-    std::cout << "Construindo esqueleto na posição: " << posicao.x << ", " << posicao.y << std::endl;
     
-    // Garante que o esqueleto é visível
-    _corpo.setFillColor(sf::Color::White);
-    
+    _experiencia.set_nivel(1);
     inicializarAnimacao();
-    
-    atacando = false;
-    _tempoAtaque = 0.0f;
+    inicializarNivel ();
     
     // Cria a arma do esqueleto
     Arma* espadaEsqueleto = new Arma(Identificador::espada_esqueleto);
@@ -51,7 +46,6 @@ Esqueleto::Esqueleto(sf::Vector2f posicao, Jogador *jogador) :
         }
     }
     
-    _experiencia.set_nivel(2);
 }
 
 Esqueleto::~Esqueleto()
