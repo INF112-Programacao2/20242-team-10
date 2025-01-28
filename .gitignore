@@ -6,7 +6,7 @@
 *.o
 *.a
 *.lib
-*.dll
+#*.dll
 
 # Arquivos temporários
 *.tmp
