@@ -9,71 +9,66 @@ Jogo::Jogo() :
     musicaIniciada (false) 
     
     {
-            try {
+        try {
         // Cria o menu
         Menu* menu = new Menu(gGrafico->get_janela());
         gEvento->set_menu(menu);
         
-        // Configura o background - substitua pelo caminho do seu arquivo
+        // Configura o background
         gEvento->set_background("fundoInterior.png");
         
-        // ... resto do código do construtor ...
     } catch (const std::exception& e) {
-        std::cout << "Erro na inicializacao do jogo: " << e.what() << std::endl;
-        // ... tratamento de erro ...
+        std::cout << "Erro: " << e.what() << std::endl;
     }
-   try {
         // Define os limites do mapa
         sf::IntRect limiteCamera(0.0f,0.0f,TAMANHO_TELA_X*4,TAMANHO_TELA_Y);
         gGrafico->set_limiteCamera(limiteCamera);
 
-        faseAtual = new Fase();
+        faseAtual = new Fase();                            // cria a fase
         
         if (faseAtual) {
-            Jogador* jogador = faseAtual->get_jogador();
+            Jogador* jogador = faseAtual->get_jogador();                            // pega o jogador da fase
             if (jogador) {
-                gEvento->set_jogador(jogador);
-                gEvento->set_fase (faseAtual);
+                gEvento->set_jogador(jogador);                                      // seta esse jogador no loop de eventos
+                gEvento->set_fase (faseAtual);                                      // seta a fase no loop de eventos
             }
-            executarJanela();
-        }
-    } catch (const std::exception& e) {
-        std::cout << "Erro na inicialização do jogo: " << e.what() << std::endl;
-        if (faseAtual) {
-            delete faseAtual;
-            faseAtual = nullptr;
+            executarJanela();                                                       // executa a janela
         }
     }
-}
 
 void Jogo::executarJanela () {
 
-    while(gGrafico->janelaEstaAberta()){                        // loop do jogo
-        gGrafico->resetarRelogio();
-        gEvento->executarLoopEvento();                                    // gerencia os eventos
-        gGrafico->limparJanela();                               // limpa a janela
+    while(gGrafico->janelaEstaAberta()){                                    // loop do jogo
+        gGrafico->resetarRelogio();                                         // reinicia o relogio do jogo
+        gEvento->executarLoopEvento();                                     // gerencia os eventos
+        gGrafico->limparJanela();                                           // limpa a janela
 
+        // se o jogo nao foi iniciado ainda
         if (!gEvento->get_jogoIniciado()) {
-            gMusica->parar();  // para a música quando voltar para o menu
+            gMusica->parar();                                           // para a música quando voltar para o menu
             musicaIniciada = false;
             // Desenha o background e o menu
             gEvento->desenhar_background();
             gEvento->get_menu()->desenhar();
         } else {
+            // se o jogo ja comecou
             if (faseAtual) {
                 if (!musicaIniciada) {
+                    // inicia a musica
                     gMusica->tocar(Identificador::musica_background);
                     musicaIniciada = true;
                 }
-
+                // executa a fase
                 faseAtual->executarFase();
             }
         }
 
+        // mostra na tela (display)
         gGrafico->mostrarNaTela();
     }
 }
 
+// destrutor
 Jogo::~Jogo () {
     if (gMusica) {
         gMusica->parar();  // para a música antes de destruir

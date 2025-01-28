@@ -23,11 +23,13 @@ const std::vector<Entidade *>& ListaEntidade::get_entidades() const
     return _entidades;
 }
 
+// funcao que retorna o tamanho da lista
 int ListaEntidade::get_tamanhoLista()
 {
     return _entidades.size();
 }
 
+// funcao que adiciona uma entidade na lista
 void ListaEntidade::adicionarEntidade(Entidade *novaEntidade)
 {
     if (novaEntidade == nullptr) {
@@ -36,53 +38,12 @@ void ListaEntidade::adicionarEntidade(Entidade *novaEntidade)
     _entidades.push_back(novaEntidade);
 }
 
-// coloca no vector de remocao de entidades, a entidade a ser removida
-/*void ListaEntidade::marcarRemocao(Entidade *entidade)
-{
-    if (entidade) {
-        _entidadesRemocao.push_back(entidade);
-    }
-}*/
-
-// limpa as entidades mortas do jogo
-/*void ListaEntidade::limparEntidadesMortas()
-{
-       std::vector<Entidade*> novasEntidades;
-    
-    // Mantém apenas as entidades que não estão marcadas para remoção
-    for (auto& entidade : _entidades) {
-        if (entidade != nullptr) {
-            bool deveRemover = false;
-            
-            // Verifica se está na lista de remoção
-            for (auto& remover : _entidadesRemocao) {
-                if (entidade == remover) {
-                    deveRemover = true;
-                    break;
-                }
-            }
-            
-            if (!deveRemover) {
-                novasEntidades.push_back(entidade);
-            } else {
-                std::cout << "Removendo entidade..." << std::endl;
-                delete entidade;
-            }
-        }
-    }
-    
-    // Limpa a lista de remoção
-    _entidadesRemocao.clear();
-    
-    // Atualiza a lista principal
-    _entidades = std::move(novasEntidades);
-}*/
-
+// funcao que limpa as entidades mortas do jogo
 void ListaEntidade::limparEntidadesMortas()
 {
-    for (int i=0 ; i < _entidades.size() ; i++){
-    if (_entidades[i]->podeRemover()){
-        removerEntidade(_entidades[i]->get_id());
+    for (int i=0 ; i < _entidades.size() ; i++){                                        // percorre a lista
+    if (_entidades[i]->podeRemover()){                                                  // se estiver marcada para remover
+        removerEntidade(_entidades[i]->get_id());                                       // chama o metodo de remover passando o id da entidade
     }
 }
 }
@@ -91,14 +52,14 @@ void ListaEntidade::limparEntidadesMortas()
 void ListaEntidade::removerEntidade(Identificador id)
 {
     try {
-        for (int i=0;i<_entidades.size();i++) {
-            if (id == _entidades[i]->get_id()) {
-                delete _entidades[i];
-                _entidades.erase(_entidades.begin() + i);
+        for (int i=0;i<_entidades.size();i++) {                                             // percorre a lista
+            if (id == _entidades[i]->get_id()) {                                            // acha atraves do id a entidade a ser deletada
+                delete _entidades[i];                           
+                _entidades.erase(_entidades.begin() + i);                                   // desaloca e limpa do vetor
             } 
         }
     } catch (const std::exception& e) {
-        std::cerr << "Erro ao remover entidade: " << e.what() << std::endl;
+        std::cerr << "Erro: " << e.what() << std::endl;
     }
 }
 
@@ -122,24 +83,25 @@ void ListaEntidade::desenhar()
 void ListaEntidade::limparEntidades()
 {
     try {
-        for (auto& entidade : _entidades) {
-            if (entidade) {
-                delete entidade;
+        for (auto& entidade : _entidades) {                                         // percorre toda a lista
+            if (entidade) {                                                         // onde tiver uma entidade
+                delete entidade;                                                    // delete e aloca null na posicao
                 entidade = nullptr;
             }
         }
-        _entidades.clear();
-        _jogador = nullptr;                     // 
+        _entidades.clear();                                                         // limpa o vector
+        _jogador = nullptr;                                                         // jogador recebe null
     } catch (const std::exception& e) {
         std::cerr << "Erro: " << e.what() << std::endl;
         throw;
     }
 }
 
+// funcao que executa as listas 
 void ListaEntidade::executar()
 {
    try {
-        // Primeiro atualiza e desenha todas as entidades
+        // Primeiro atualiza as entidades
         for (auto& entidade : _entidades) {
             if (entidade) {
                 entidade->atualizar();
@@ -151,12 +113,9 @@ void ListaEntidade::executar()
             if (entidade) {
                 entidade->desenhar();
             }
-        }
+        }      
 
-        // Remove as entidades no final da execução
-        //limparEntidadesMortas();
-        
     } catch (const std::exception& e) {
-        std::cerr << "Erro na execução da lista de entidades: " << e.what() << std::endl;
+        std::cerr << "Erro: " << e.what() << std::endl;
     }
 }

@@ -23,6 +23,3 @@
 *.sln
 *.vcxproj
 *.vcxproj.filters
-
-# Outros
-.DS_Store  # Para Mac

@@ -6,11 +6,13 @@
 #include <iostream>
 #include "projetil.h"
 
+
+// funcao que inicializa as animacoes do jogador
 void Jogador::inicializarAnimacao()
 {
-    sf::Vector2f origem = sf::Vector2f (_tamanho.x / 2.0f, _tamanho.y / 2.0f);
-    //sf::Vector2f origemPulo = sf::Vector2f (_tamanho.x / 2.0f, _tamanho.y * 0.75f);
-
+    sf::Vector2f origem = sf::Vector2f (_tamanho.x / 2.0f, _tamanho.y / 2.0f);                  // seta a origem
+    
+    // inicializa as animacoes
     _animacao.adicionarAnimacao("Correndo.png", "CORRER", 10 , 0.05f , sf::Vector2f(6,2),origem,true);
     _animacao.adicionarAnimacao("Parado.png", "PARADO", 10 , 0.10f , sf::Vector2f(6,2),origem,true);
     _animacao.adicionarAnimacao("Pulando.png", "PULAR", 3 , 0.10f , sf::Vector2f(6,2),origem,true);
@@ -78,6 +80,7 @@ void Jogador::atualizarAnimacao()
     }
 }
 
+// funcao que inicializa a barra de vida do jogador
 void Jogador::inicializarBarraVida()
 {
     sf::Vector2f tamanhoTubo = sf::Vector2f (TAMANHO_BARRA_VIDA_EIXO_X,TAMANHO_BARRA_VIDA_EIXO_Y);           // pega o tamanho do tubo da barra de vida
@@ -98,6 +101,7 @@ void Jogador::atualizarBarraVida()
     // pega a posicao e o tamanho da janela
     sf::Vector2f posicaoJanela = gGrafico->get_camera().getCenter();
     sf::Vector2f tamanhoJanela (TAMANHO_TELA_X,TAMANHO_TELA_Y);
+
     // atualiza a posicao da barra de vida
     sf::Vector2f posicaoBarra = sf::Vector2f (posicaoJanela.x - tamanhoJanela.x / 2.0f + 10.0f, posicaoJanela.y - tamanhoJanela.y / 2.0f + 30.0f);     
     _tuboBarraVida.setPosition(posicaoBarra);
@@ -123,16 +127,6 @@ void Jogador::atualizarNivel()
     _textoNivel.set_posicao (sf::Vector2f (posicao.x + 5.0f, posicao.y - _textoNivel.get_tamanho().y - 12.0f));
 }
 
-void Jogador::resetarEstado()
-{
-    _velocidade = sf::Vector2f(VELOCIDADE_JOGADOR_X, VELOCIDADE_JOGADOR_Y);
-    _vida = 100.0f;
-    morrendo = false;
-    andando = false;
-    atacando = false;
-    levandoDano = false;
-    _congelaJogo = false;
-}
 
 void Jogador::inicializarBarraXP()
 {
@@ -186,11 +180,12 @@ void Jogador::atualizarXP()
 
 // construtor 
 Jogador::Jogador (sf::Vector2f posicao) :
-    Personagem (posicao,sf::Vector2f (TAMANHO_JOGADOR_X,TAMANHO_JOGADOR_Y), sf::Vector2f(VELOCIDADE_JOGADOR_X,VELOCIDADE_JOGADOR_Y), Identificador::jogador , DURACAO_JOGADOR_MORTE, DURACAO_JOGADOR_SOFRER_DANO) ,
-     estaNoChao (false) , _textoXP (gGrafico->carregarFonte("FonteNivel.ttf"),"",20) , _congelaJogo (false)
+    Personagem (posicao,sf::Vector2f (TAMANHO_JOGADOR_X,TAMANHO_JOGADOR_Y), sf::Vector2f(VELOCIDADE_JOGADOR_X,VELOCIDADE_JOGADOR_Y), Identificador::jogador , DURACAO_JOGADOR_MORTE, DURACAO_JOGADOR_SOFRER_DANO),
+     estaNoChao (false),
+    _textoXP (gGrafico->carregarFonte("FonteNivel.ttf"),"",20),
+    _congelaJogo (false),
+    gMusica (gMusica->get_gerenciadorMusical ())
     {
-       //resetarEstado ();
-        std::cout << "vida jogador inicio: " << _vida << std::endl;
 
         inicializarAnimacao();
         inicializarBarraVida();
@@ -198,12 +193,15 @@ Jogador::Jogador (sf::Vector2f posicao) :
         inicializarNivel ();
         inicializarXP ();
 
+        // cria a arma do jogador 
         Arma* espada = new Arma (Identificador::espada_jogador);
         espada->set_tamanho (sf::Vector2f(TAMANHO_ARMA, TAMANHO_ARMA));
         set_arma (espada);
         if (_arma){
-        _arma->set_personagem(this);
-        _arma->set_dano(_experiencia.get_forca());
+
+        // depois de criada, atualiza o dano e o personagem dono da espada
+            _arma->set_personagem(this);
+            _arma->set_dano(_experiencia.get_forca());
         }
 
 
@@ -263,7 +261,7 @@ void Jogador::adicionarXP(float experiencia)
     inicializarXP();
 }
 
-
+// funcao que atualiza os estados do pulo
 void Jogador::pular()
 {
     // verifica se pode pular 
@@ -275,16 +273,18 @@ void Jogador::pular()
 
 }
 
+// funcao que seta que pode pular
 void Jogador::podePular()
 { 
     estaNoChao = true;
 }
 
-
+// funcao que verifica a colisao do jogador com as outras entidades
 void Jogador::colisao(Entidade *entidade, sf::Vector2f distancia)
 {
     static bool jaColidiu = false;
 
+    // verifica a colisao com a plataforma
     switch (entidade->get_id()) {
         case (Identificador::plataforma): {
             Plataforma* plataforma = dynamic_cast<Plataforma*>(entidade);
@@ -295,47 +295,19 @@ void Jogador::colisao(Entidade *entidade, sf::Vector2f distancia)
         }
         break;
 
-        case (Identificador::espada_esqueleto) : {
-            Arma* arma = dynamic_cast < Arma* > (entidade);
-            if (arma){
-            tomarDano(arma->get_dano());
-            //std::cout << "vida jogador: " << _vida << std::endl;
-            }
-        }
-        break;
-
+        // verifica a colisao como morcego
         case (Identificador::morcego) : {
             Morcego* morcego = dynamic_cast <Morcego*> (entidade);
             if (morcego->estaAtacando())
                 tomarDano(morcego->get_forca());
-            //std::cout << "vida jogador: " << _vida << std::endl;
             break;
         }
-        case (Identificador::faca_goblin) : {
-            Arma* arma = dynamic_cast < Arma* > (entidade);
-            if (arma){
-            tomarDano(arma->get_dano());
-            //std::cout << "vida jogador: " << _vida << std::endl;
-            }
-        }
-        break;
-
-        case (Identificador::projetil_alma) : {
-            Projetil* projetil = dynamic_cast <Projetil*> (entidade);
-            tomarDano (projetil->get_dano());
-            projetil->set_colidiu (true); 
-        }
-        break;
-
-        case (Identificador::cajado_chefao) : {
-            Arma* cajado = dynamic_cast <Arma*> (entidade);
-            tomarDano (cajado->get_dano());
-            //std::cout << "vida jogador: " << _vida << std::endl;
-        }
-        break;
     }
+
+    // as demais entidades ja sao verificadas em outros locais, como em arma.cpp por exemplo
 }
 
+// funcao que atualiza o estado de atacar
 void Jogador::atacar(bool atacar)
 {
     if (atacar && !morrendo){
@@ -344,7 +316,7 @@ void Jogador::atacar(bool atacar)
     }
 }
 
-// funcao que movimenta o jogador para as quatro direcoes
+// funcao que atualiza tudo do jogador
 void Jogador::atualizar () {
 
         if (morrendo) {
@@ -368,10 +340,10 @@ void Jogador::atualizar () {
         }
 
 }
-
+// funcao que atualiza a posicao, a movimentacao do jogador
 void Jogador::atualizarPosicao()
 {
-    // Movimento horizontal - Simplificado para evitar colisões falsas
+    // Movimento horizontal
     if (andando) {
         float deltaX = (andaEsquerda) ? -_velocidade.x : _velocidade.x;
         _corpo.move(deltaX, 0.0f);
@@ -382,26 +354,29 @@ void Jogador::atualizarPosicao()
         _velocidade.y = 0.0f;
     }
     
-    // Movimento vertical (pulo) - só aplica gravidade se não estiver no chão
+    // Movimento vertical (pulo)
     if (!estaNoChao) {
         _velocidade.y += GRAVIDADE;
         _corpo.move(0.0f, _velocidade.y);
     }
 
-    // Colisão com o chão - apenas quando realmente estiver abaixo do nível
+    // Colisão com o chão 
     if (_corpo.getPosition().y > NIVEL_DA_PLATAFORMA) {
         _corpo.setPosition(_corpo.getPosition().x, NIVEL_DA_PLATAFORMA);
         _velocidade.y = 0.0f;
         estaNoChao = true;
     }
 
-    //std::cout << "posicao corpo: " << _corpo.getPosition ().x << " , "<< _corpo.getPosition ().y <<   std::endl;
+    // encontrou a coroa
     if (_corpo.getPosition ().x >= 4700.0f &&
-        _corpo.getPosition().y >= 275.0f) {     // encontrou a coroa
-        _congelaJogo = true;
+        _corpo.getPosition().y >= 275.0f) {  
+        _congelaJogo = true;                                            // congela o jogo
+        gMusica->parar ();
+        gMusica->tocar(Identificador::musica_venceu_jogo);
     }       
 }
 
+// funcao que desenha tudo do jogador 
 void Jogador::desenhar()
 {
     gGrafico->desenhar (_corpo);

@@ -43,7 +43,6 @@ private:
     // metodos responsaveis pela animacao do nivel do jogador 
     void inicializarNivel (); 
     void atualizarNivel ();
-    void resetarEstado ();
     // metodos responsaveis pela experiencia do jogador 
     void inicializarBarraXP ();
     void atualizarBarraXP ();

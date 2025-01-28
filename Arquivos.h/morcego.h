@@ -30,13 +30,6 @@ public:
 
     virtual void colisao (Entidade* entidade, sf::Vector2f distancia) override;
 
-    //void atualizar () override;
-
-
-
-
-
-
 };
 
 #endif

@@ -14,11 +14,11 @@
 #define TAMANHO_BARRA_VIDA_EIXO_Y 6.0f
 
 #define TEMPO_RECUPERACAO_DANO 1.5f
-//#define TEMPO_RECUPERACAO_DANO_ESQUELETO 1.8f
+
 #define TEMPO_PROTECAO_JOGADOR 1.0f  // Tempo de protecao após tomar dano
 
-// Em personagem.h
-class Arma;  // Forward declaration
+
+class Arma;  
 
 class Personagem : public Entidade {
 protected:
@@ -60,8 +60,10 @@ protected:
 public:
     // construtor
     Personagem (sf::Vector2f posicao,sf::Vector2f tamanho,sf::Vector2f velocidade, Identificador id, float duracaoMorte , float duracaoSofrerDano);
+
     // destrutor
     virtual ~Personagem ();
+
     // getters e setters
     sf::Vector2f get_velocidade();
     bool estaAndandoParaEsquerda ();
@@ -77,7 +79,8 @@ public:
     float get_tempoProtecaoAtaque ();
     void set_duracaoAnimacaoMorte (float duracao);
     float get_vida ();
-    void set_velocidadeY(float velocidadeY);
+
+
     // metodos virtuais
     virtual void atualizar() = 0;
     virtual void desenhar();
@@ -85,6 +88,7 @@ public:
     virtual void atacar(bool atacando);
     virtual void atualizarPosicao () = 0;
     virtual void tomarDano(float dano);
+
     // metodos da classe
     void andar(bool andaEsquerda);
     void parar();

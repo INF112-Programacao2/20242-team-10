@@ -14,14 +14,21 @@ private:
     bool _estaAtivo;
 
 public:
+    // construtor
     Menu(sf::RenderWindow* window);
+
+    // destrutor
     ~Menu();
-    
-    void desenhar();
-    void moverCima();
-    void moverBaixo();
+
+    // getters e setters
     int get_Pressionar() const;
     bool get_EstaAtivo() const;
     void set_EstaAtivo(bool ativo);
+    
+    // metodos da classe
+    void desenhar();
+    void moverCima();
+    void moverBaixo();
+
 };
 #endif

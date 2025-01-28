@@ -13,8 +13,10 @@ protected:
 public:
     // construtor
     Obstaculo (sf::Vector2f posicao , sf::Vector2f tamanho, Identificador id);
+    
     // destrutor
     ~Obstaculo ();
+
     // metodos da classe
     virtual void colisao (Entidade* entidade,sf::Vector2f distancia) = 0;
     virtual void atualizar ();

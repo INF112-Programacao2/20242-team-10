@@ -23,8 +23,10 @@ private:
 public:
     // construtor
     Plataforma (sf::Vector2f posicao, sf::Vector2f tamanho, std::string tipo, Identificador id);
+    
     // destrutor
     ~Plataforma ();
+
     // metodos da classe
     void set_escala(sf::Vector2f escala);
     virtual void colisao (Entidade* entidade, sf::Vector2f distancia);
