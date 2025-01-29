@@ -1,6 +1,0 @@
-# links e referencias
-
-https://pt.wikipedia.org/wiki/SFML      
-https://www.sfml-dev.org/
-
-https://itch.io/
