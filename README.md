@@ -29,9 +29,11 @@ Em um antigo reino, existia uma coroa mágica conhecida como a Coroa do Equilibr
 Instalar a biblioteca SFML no Linux:
 
 1- Abra o terminal e use o seguinte comando para atualizar o gerenciador de pacotes apt:
+
 ![Captura de tela 2025-01-29 203937](https://github.com/user-attachments/assets/74e9e938-7f86-4eea-92ff-1a4b4d014f37)
 
 2- Digite o seguinte comando para instalar a biblioteca:
+
 ![Captura de tela 2025-01-29 204138](https://github.com/user-attachments/assets/de0b254a-b72b-43f9-a602-6e4bcd52b6e2)
 
 3- Para instalar componentes específicos da SFML:
