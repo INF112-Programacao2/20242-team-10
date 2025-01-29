@@ -36,7 +36,15 @@ Em um antigo reino, existia uma coroa mágica conhecida como a Coroa do Equilibr
 
 # Algumas Observações
 
-- Dependendo da configuração de cada computador, pode ser que o jogo fique um pouco mais pesado e a velocidade do jogador principal, tanto andando quanto pulando, se altere. Nesse caso, é recomendável que se altere a velocidade do mesmo (ou diminua caso necessario) para uma melhor experiencia. Para isso, basta alterar os defines em: Jogador.h (#define VELOCIDADE_JOGADOR_X *coloque uma velocidade adequada* e #define TAMANHO_PULO *coloque o tamanho do pulo adequado*) e em Personagem.h (#define GRAVIDADE *altera a gravidade de acordo com a movimentacao de pulo do jogador, aumente se ele estiver muito tempo no ar, ou dimua se ele nao esta pulando corretamente*) 
+- Dependendo da configuração de cada computador, pode ser que o jogo fique um pouco mais pesado e a velocidade do jogador principal, tanto andando quanto pulando, se altere. Nesse caso, é recomendável que se altere a velocidade do mesmo (ou diminua caso necessario) para uma melhor experiencia. Para isso, basta alterar os defines em: Jogador.h (#define VELOCIDADE_JOGADOR_X <*coloque uma velocidade adequada*> e #define TAMANHO_PULO <*coloque o tamanho do pulo adequado*>) e em Personagem.h (#define GRAVIDADE <*altera a gravidade de acordo com a movimentacao de pulo do jogador, aumente se ele estiver muito tempo no ar, ou dimua se ele nao esta pulando corretamente*>)
+
+# LINKS
+- Sprites utilizados:
+    https://itch.io/
+  
+- Materiais de apoio:
+    https://www.sfml-dev.org/
+    https://pt.wikipedia.org/wiki/SFML    
   
 
 
