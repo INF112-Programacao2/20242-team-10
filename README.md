@@ -24,5 +24,19 @@ Em um antigo reino, existia uma coroa mágica conhecida como a Coroa do Equilibr
 
 ![image](https://github.com/user-attachments/assets/3947ce74-bb08-4095-a889-484cbf15531a)
 
+# Tutorial de Execução
+
+
+
+
+
+
+
+
+
+# Algumas Observações
+
+- Dependendo da configuração de cada computador, pode ser que o jogo fique um pouco mais pesado e a velocidade do jogador principal, tanto andando quanto pulando, se altere. Nesse caso, é recomendável que se altere a velocidade do mesmo (ou diminua caso necessario) para uma melhor experiencia. Para isso, basta alterar os defines em: Jogador.h (#define VELOCIDADE_JOGADOR_X *coloque uma velocidade adequada* e #define TAMANHO_PULO *coloque o tamanho do pulo adequado*) e em Personagem.h (#define GRAVIDADE *altera a gravidade de acordo com a movimentacao de pulo do jogador, aumente se ele estiver muito tempo no ar, ou dimua se ele nao esta pulando corretamente*) 
+  
 
 
