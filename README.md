@@ -14,4 +14,12 @@ Fernando César Pereira Reis - 116212
 
 Thales Barcelos de Castro - 116229
 
-#
+# História
+
+Em um antigo reino, existia uma coroa mágica conhecida como a Coroa do Equilibrio. Essa coroa não era apenas um símbolo de poder, mas também uma relíquia que mantinha a ordem e a paz no reino. No entanto, durante uma invasão de criaturas sombrias, a coroa foi roubada e escondida em um lugar amaldiçoado: o Corredor das Almas Perdidas. Sua missao é atravessar este corredor e recuperar a coroa para que a harmônia do reino volte ao normal!
+
+![printJogo1](https://github.com/user-attachments/assets/4406c5f0-c23a-44ab-a2ec-005b6f7be094)
+
+![printJogo2](https://github.com/user-attachments/assets/f37ca1d7-ee55-4ed6-a314-9e12da194293)
+
+
