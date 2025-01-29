@@ -24,5 +24,6 @@ Em um antigo reino, existia uma coroa mágica conhecida como a Coroa do Equilibr
 
 ![image](https://github.com/user-attachments/assets/3947ce74-bb08-4095-a889-484cbf15531a)
 
+![printJogo4](https://github.com/user-attachments/assets/13356318-ccda-446e-bc71-25dea0c22bc4)
 
 
