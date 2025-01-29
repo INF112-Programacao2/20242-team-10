@@ -18,7 +18,7 @@
 /release/
 
 # Arquivos específicos da IDE
-.vscode
+.vscode/
 .vs/
 *.sln
 *.vcxproj
