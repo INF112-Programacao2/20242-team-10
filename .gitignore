@@ -1,6 +1,9 @@
 # Executáveis
 *.exe
-*.out
+**/*.exe
+main.exe
+/main.exe
+main
 
 # Arquivos objeto e bibliotecas
 *.o
@@ -19,6 +22,7 @@
 
 # Arquivos específicos da IDE
 .vscode/
+**/.vscode/
 .vs/
 *.sln
 *.vcxproj
