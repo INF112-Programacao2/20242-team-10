@@ -40,9 +40,11 @@ Em um antigo reino, existia uma coroa mágica conhecida como a Coroa do Equilibr
 
 # LINKS
 - Sprites utilizados:
+
     https://itch.io/
   
 - Materiais de apoio:
+  
     https://www.sfml-dev.org/
   
     https://pt.wikipedia.org/wiki/SFML    
