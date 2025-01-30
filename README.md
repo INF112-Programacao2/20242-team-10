@@ -41,6 +41,12 @@ Instalar a biblioteca SFML no Linux:
 
 Após esses passos a instalação será concluída.
 
+4- Para compilar basta usar o comando "make" no makefile criado.
+
+5- Para executar basta escrever "main" no terminal.
+
+Após isso o jogo o programa irá rodar normalmente.
+
 
 
 
